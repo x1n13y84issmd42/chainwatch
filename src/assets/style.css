@@ -48,24 +48,38 @@ html {
     border-radius: 0 20px 20px 0;
 }
 
+input[type=button] {
+	width: auto;
+    border-radius: 10px;
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+    font-size: 12pt;
+}
+
+input[type=button],
 #sidebar > .btn {
-	position: relative;
-	display: block;
-    width: 90px;
-    height: 40px;
-    margin: 10px 0 10px 0;
-    /* border: 1px white solid; */
     text-align: center;
-    line-height: 40px;
-    font-size: 8pt;
     font-family: monospace;
     user-select: none;
     cursor: pointer;
-    border-radius: 0 10px 10px 0;
+	color: white;
     background-color: #248;
 	transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
 
+#sidebar > .btn {
+	position: relative;
+	display: block;
+    margin: 10px 0 10px 0;
+	width: 90px;
+    border-radius: 0 10px 10px 0;
+    line-height: 40px;
+    height: 40px;
+    font-size: 8pt;
+}
+
+input[type=button]:hover,
 #sidebar > .btn:hover {
 	background-color: #d82;
 	color: black;
@@ -132,4 +146,47 @@ html {
     border: none;
     font-family: monospace;
 	cursor: pointer;
+}
+
+.alert {
+	position: absolute;
+    top: 300px;
+    left: 50%;
+    margin-left: -200px;
+    width: 400px;
+    background-color: #222;
+    color: white;
+    font-family: sans-serif;
+}
+
+.alert.type_info > .header,
+.alert.type_info > .footer {
+	position: relative;
+	color: white;
+	background: repeating-linear-gradient(
+		45deg,
+		#606dbc,
+		#606dbc 10px,
+		#465298 10px,
+		#465298 20px
+	);
+}
+
+.alert > .header {
+	font-size: 16pt;
+	padding: 10px;
+}
+
+.alert > .footer {
+	height: 5px;
+}
+
+.alert > .content {
+	color: white;
+	margin: 20px 10px;
+	text-align: center;
+}
+
+.alert > .content > p {
+	margin-bottom: 10px;
 }
