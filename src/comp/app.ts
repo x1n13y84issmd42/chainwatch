@@ -18,9 +18,19 @@ export async function stateFn(state: State) {
 			.then(accs => state.account = accs[0])
 			.catch(err => console.error(err))
 		;
+
+		(window as any).ethereum.on('accountsChanged', (accounts: string[]) => {
+			if (accounts.length === 0) {
+				disconnect();
+			}
+		});
+
+		(window as any).ethereum.on('disconnect', () => {
+			disconnect();
+		});
 	}
-	
-	state.unauthorize = function () {
+
+	function disconnect() {
 		state.account = false;
 	}
 
