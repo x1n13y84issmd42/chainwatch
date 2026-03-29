@@ -1,0 +1,35 @@
+{
+	"include": [
+		"./src/**/*",
+		// "../shared/q.ts"
+	],
+
+	"exclude": [
+		"./node_modules",
+		"./dist"
+	],
+
+	"compilerOptions": {
+		"rootDir": ".",
+		"outDir": "dist",
+
+		"target": "ESNext",
+		"moduleResolution": "nodenext",
+		"module": "nodenext",
+
+		"allowJs": false,
+		"experimentalDecorators": true,
+		"noImplicitAny": true,
+		"preserveConstEnums": true,
+		"removeComments": true,
+		"declaration": false,
+		"sourceMap": false,
+		"forceConsistentCasingInFileNames": false,
+		"esModuleInterop": true,
+
+		"lib": [
+			"dom",
+			"ESNext"
+		],
+	},
+}

@@ -1,0 +1,135 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+html {
+	background-color: #444;
+	color: #bbb
+}
+
+.explorer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url('/assets/dot_20.png');
+	background-repeat: repeat;
+}
+
+.overlay {
+	background-color: rgba(0, 0, 0, 0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.explorer > svg {
+	position: absolute;
+	z-index: 100;
+	top: 30px;
+	left: 120px;
+    /* border: 1px red solid; */
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 20px 0 0 20px;
+}
+
+#sidebar {
+	position: absolute;
+	z-index: 1000;
+    left: 0;
+	width: 100px;
+    top: 30px;
+    bottom: 30px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0 20px 20px 0;
+}
+
+#sidebar > .btn {
+	position: relative;
+	display: block;
+    width: 90px;
+    height: 40px;
+    margin: 10px 0 10px 0;
+    /* border: 1px white solid; */
+    text-align: center;
+    line-height: 40px;
+    font-size: 8pt;
+    font-family: monospace;
+    user-select: none;
+    cursor: pointer;
+    border-radius: 0 10px 10px 0;
+    background-color: #248;
+	transition: background-color 0.2s ease-out, color 0.2s ease-out;
+}
+
+#sidebar > .btn:hover {
+	background-color: #d82;
+	color: black;
+}
+
+#sidebar > .btn.input:hover {
+    width: 300px;
+	cursor: default;
+}
+
+#sidebar > .btn.input {
+    overflow: hidden;
+    transition: width 0.2s ease-out;
+}
+
+#sidebar > .btn.input > div {
+	position: absolute;
+}
+
+#sidebar > .btn.input > span {
+	opacity: 1;
+	transition: opacity 0.2s ease-out;
+}
+
+#sidebar > .btn.input:hover > span {
+	opacity: 0;
+}
+
+#sidebar > .btn.input > .input {
+	opacity: 0;
+	position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+#sidebar > .btn.input:hover > .input {
+	opacity: 1;
+}
+
+#sidebar > .btn.input > .input > input[type=text] {
+	position: absolute;
+    left: 7px;
+    top: 11px;
+    width: 252px;
+    font-size: 8pt;
+    border: none;
+	outline: none;
+    font-family: monospace;
+	line-height: 14pt;
+	text-transform: uppercase;
+}
+
+#sidebar > .btn.input > .input > input[type=button] {
+	position: absolute;
+    right: 0;
+    bottom: 0;
+    display: block;
+    top: 0;
+    width: 30px;
+    font-size: 20pt;
+    border: none;
+    font-family: monospace;
+	cursor: pointer;
+}

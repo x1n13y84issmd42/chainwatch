@@ -1,0 +1,16 @@
+<component:explorer>
+	<div class="'explorer'" >
+		<sidebar
+			unauthorize="this.unauthorize"
+			addnode="this.addnode"
+			onaddrsubmit="this.onaddrsubmit"
+			monitor="this.monitor"
+		>
+			<side_btn_input value="'ADD ADDR'" onsubmit="this.onaddrsubmit"></side_btn_input>
+			<side_btn value="'MONITOR'" onclick="this.monitor"></side_btn>
+			<!-- <side_btn value="'DISCONNECT'" onclick="this.unauthorize"></side_btn> -->
+		</sidebar>
+
+		<svg id="graph" width="600" height="600" ></svg>
+	</div>
+</component:explorer>

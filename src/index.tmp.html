@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Allows unsafe eval() calls -->
+	<!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval'; object-src 'none';"> -->
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';">
+
+	<link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+  <!-- <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+  </svg> -->
+
+	<div id="test" class="this.n">
+		<app ethereum="this.ethereum"></app>
+	</div>
+
+	<div id="components" style="display:none;">
+
+
+<component:app>
+	<if
+		web3="this.web3"
+		cond="this.account"
+		unauthorize="this.unauthorize"
+		addnode="this.addnode"
+	>
+		<explorer web3="this.web3" unauthorize="this.unauthorize"></explorer>
+	</if>
+	<if cond="!this.account" authorize="this.authorize">
+		<div class="'overlay'">
+			<p>'NOT AUTHORIZED'</p>
+			<btn onclick="this.authorize" value="'Authorize wallet'" />
+		</div>
+	</if>
+</component:app>
+
+<component:btn>
+	<input
+		type="`button`"
+		value="this.value"
+		id="this.id"
+		name="this.name"
+		onclick="this.onclick"
+	/>
+</component:btn>
+
+<component:explorer>
+	<div class="'explorer'" >
+		<sidebar
+			unauthorize="this.unauthorize"
+			addnode="this.addnode"
+			onaddrsubmit="this.onaddrsubmit"
+			monitor="this.monitor"
+		>
+			<side_btn_input value="'ADD ADDR'" onsubmit="this.onaddrsubmit"></side_btn_input>
+			<side_btn value="'MONITOR'" onclick="this.monitor"></side_btn>
+			<!-- <side_btn value="'DISCONNECT'" onclick="this.unauthorize"></side_btn> -->
+		</sidebar>
+
+		<svg id="graph" width="600" height="600" ></svg>
+	</div>
+</component:explorer>
+
+<component:explorer_graph>
+	<svg id="graph"></svg>
+</component:explorer_graph>
+
+<component:side_btn>
+	<a class="'btn'" onclick="this.onclick">this.value</a>
+</component:side_btn>
+
+<component:side_btn_input>
+	<div class="'btn input'">
+		<span>this.value</span>
+		<div class="'input'">
+			<input type="'text'" placeholder="'0x...'" onkeypress="this.onkeypress" />
+			<input type="'button'" value="'+'"  onclick="this.onclick" />
+		</div>
+	</div>
+</component:side_btn_input>
+
+<component:sidebar>
+	<div id="sidebar"></div>
+</component:sidebar>
+
+
+	</div>
+</body>
+</html>
+

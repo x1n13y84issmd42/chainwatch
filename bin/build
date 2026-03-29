@@ -1,0 +1,42 @@
+#!/bin/bash
+
+rm -rf ./dist
+mkdir ./dist
+
+function log {
+	_IFS=$IFS && IFS='' && echo -e "\e[33mbuild\e[0m" $@ >&2 && IFS=$_IFS
+}
+
+# Concatenates multiple files into single one.
+# Arguments:
+#	$1 output file name
+#	$@ file paths & masks to combine into $1
+function bundle {
+	local OUTFILE=$1
+	shift;
+
+	log "Building \e[33m\e[7m$OUTFILE\e[0m"
+
+	echo "" > $OUTFILE
+
+	local MASKS=($@)
+	for MASK in ${MASKS[@]}; do
+		local FILES=$(find "$MASK" -type f)
+		for file in ${FILES[@]}; do
+			log "  Adding " $file
+			# echo "// $file\n" >> $OUTFILE
+			cat $file >> $OUTFILE
+			echo -e '\n' >> $OUTFILE
+		done
+	done
+
+
+	log "$OUTFILE is ready.\n"
+}
+
+bundle src/index.tmp.html \
+	src/partials/prologue.htm \
+	src/comp/*.htm \
+	src/partials/epilogue.htm \
+&& \
+npx webpack --mode development

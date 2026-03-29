@@ -1,0 +1,16 @@
+<component:app>
+	<if
+		web3="this.web3"
+		cond="this.account"
+		unauthorize="this.unauthorize"
+		addnode="this.addnode"
+	>
+		<explorer web3="this.web3" unauthorize="this.unauthorize"></explorer>
+	</if>
+	<if cond="!this.account" authorize="this.authorize">
+		<div class="'overlay'">
+			<p>'NOT AUTHORIZED'</p>
+			<btn onclick="this.authorize" value="'Authorize wallet'" />
+		</div>
+	</if>
+</component:app>

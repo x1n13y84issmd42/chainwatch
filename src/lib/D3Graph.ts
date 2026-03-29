@@ -1,0 +1,182 @@
+import * as d3 from 'd3';
+
+type Addr = {addr: string, balance?: number};
+type Tx = {source: number, target: number};
+
+type GraphNode = Addr & {x: number, y: number} & {label: string};
+type GraphEdge = Tx & Partial<{x1: number, y1: number, x2: number, y2: number}>;
+
+export class D3Graph {
+	protected svg!: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+	protected w!: number;
+	protected h!: number;
+
+	protected nodes: GraphNode[] = [];
+	protected edges: GraphEdge[] = [];
+
+	protected sim!: d3.Simulation<GraphNode, undefined>;
+
+	protected maxBalance = 0;
+
+	constructor(selector: string) {
+		this.svg = d3.select(selector);
+		this.svg.attr('width', window.innerWidth - 120);
+		this.svg.attr('height', window.innerHeight - 60);
+		this.w = +this.svg.attr('width');
+		this.h = +this.svg.attr('height');
+
+		this.svg.append('g').attr('id', 'edges');
+		this.svg.append('g').attr('id', 'nodes');
+		this.svg.append('g').attr('id', 'node-labels');
+		this.svg.append('g').attr('id', 'edge-labels');
+
+		// Works incorrectly, see updateSim()
+		//
+		// this.sim = d3.forceSimulation(this.nodes)
+		// 	.force('link', d3.forceLink().links(this.edges))
+		// 	.force('charge', d3.forceManyBody().strength(-100))
+		// 	.force('center', d3.forceCenter(this.w / 2, this.h / 2))
+		// 	.on('tick', () => this.tick())
+		// ;
+	}
+	
+	tick() {
+		this.svg.select('#edges').selectAll('line')
+			.attr('x1', (d: any) => d.source.x)
+			.attr('y1', (d: any) => d.source.y)
+			.attr('x2', (d: any) => d.target.x)
+			.attr('y2', (d: any) => d.target.y)
+		;
+
+		this.svg.select('#nodes').selectAll('circle')
+			.attr('cx', (n: any) => n.x)
+			.attr('cy', (n: any) => n.y)
+			.attr('r', (n: any) => (n.balance / this.maxBalance + 0.1) * 20)
+		;
+
+		this.svg.select('#node-labels').selectAll('text')
+			.attr('x', (d: any) => d.x)
+			.attr('y', (d: any) => d.y - 15)
+		;
+
+		this.svg.select('#node-labels').selectAll('rect')
+			.attr('x', (n: any) => n.x - 5)
+			.attr('y', (n: any) => n.y - 30)
+		;
+	}
+
+	hasAddress(addr: string) {
+		const addrIndex = this.nodes.findIndex(n => n.addr === addr);
+		return addrIndex > -1;
+	}
+
+	addAddress(addr: string, balance: number) {
+		const addrIndex = this.nodes.findIndex(n => n.addr === addr);
+		if (addrIndex != -1) {
+			console.log(addr, `already added @`, addrIndex);
+			return addrIndex;
+		}
+
+		this.pauseSim();
+
+		this.maxBalance = Math.max(this.maxBalance, balance);
+
+		const n: GraphNode = {
+			addr,
+			balance,
+			x: Math.floor(this.w / 2 + Math.random() * 100 - 50),
+			y: Math.floor(this.h / 2 + Math.random() * 100 - 50),
+			label: `${addr.substring(0, 6)}...${addr.substring(addr.length-4)} (${balance?.toFixed(2)})`
+		};
+
+		this.nodes.push(n);
+
+		const updNodes = this.svg.select('#nodes').selectAll('circle').data(this.nodes);
+		const enterNodes = updNodes.enter()
+			.append("circle")
+			.attr('cx', d => d.x)
+			.attr('cy', d => d.y)
+			.attr('r', 7)
+			.attr('fill', 'rgb(75, 100, 255)')
+			.attr('stroke', 'rgba(255, 255, 255, 0.5)')
+			.attr('stroke-width', 3)
+		;
+		
+		enterNodes.merge(updNodes as any);
+		
+		const updNodeLabels = this.svg.select('#node-labels').selectAll('text').data(this.nodes);
+
+		const enterNodeLabelBGs = updNodeLabels.enter()
+			.append('rect')
+			.attr('x', d => d.x - 10)
+			.attr('y', d => d.y - 30)
+			.attr('rx', 5)
+			.attr('ry', 5)
+			.attr('width', d => d.label.length * 7.2 + 10)
+			.attr('height', 20)
+			.attr('fill', 'rgba(111, 111, 111, 0.5)')
+		;
+
+		const enterNodeLabels = updNodeLabels.enter()
+			.append('text')
+			.attr('fill', 'white')
+			.attr('font-family', 'monospace')
+			.text(d => d.label)
+		;
+
+		enterNodeLabelBGs.merge(enterNodeLabels as any).merge(updNodeLabels as any);
+
+		this.updateSim();
+
+		return this.nodes.length - 1;
+	}
+
+	addTx(from: number, to: number, amnt: number) {
+		//TODO: multiple txs are possible, but will do for now.
+		const txIndex = this.edges.findIndex(e => e.source === from && e.target === to);
+		if (txIndex != -1) {
+			console.log(`tx`, from, to, `already added @`, txIndex);
+			return;
+		}
+
+		this.pauseSim();
+
+		// Adding an edge from n to a random node.
+		const e: GraphEdge = {
+			source: from,
+			target: to,
+		};
+
+		this.edges.push(e);
+
+		const updEdges = this.svg.select('#edges').selectAll('line').data(this.edges);
+		const enterEdges = updEdges.enter()
+			.append('line')
+			.attr('stroke-width', 1)
+			.attr('stroke-dasharray', '8 3')
+			.style('stroke', 'rgba(255, 255, 255, 0.5)')
+		;
+
+		enterEdges.merge(updEdges as any);
+
+		this.updateSim();
+	}
+
+	pauseSim() {
+		this.sim && this.sim.stop();
+	}
+
+	updateSim() {
+		// This approach works incorrectly for some reason.
+		// this.sim.nodes(this.nodes).force('link', d3.forceLink().links(this.edges));
+		// this.sim.restart();
+
+		// Seems excessive but works at least.
+		this.sim = d3.forceSimulation(this.nodes)
+			.force('link', d3.forceLink().links(this.edges).strength(0.01))
+			.force('charge', d3.forceManyBody().strength(-10))
+			.force('center', d3.forceCenter(this.w / 2, this.h / 2))
+			.on('tick', () => this.tick())
+		;
+	}
+}
