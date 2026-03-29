@@ -23,8 +23,7 @@
 <component:alert>
 	<div class="`alert type_${this.type}`">
 		<h1 class="'header'">this.title</h1>
-		<div class="'content'" id="content">
-		</div>
+		<div class="'content'" id="content"></div>
 		<div class="'footer'"></div>
 	</div>
 </component:alert>
@@ -37,15 +36,20 @@
 	>
 		<explorer web3="this.web3" unauthorize="this.unauthorize"></explorer>
 	</if>
-	<if cond="!this.account" authorize="this.authorize">
-		<!-- <div class="'overlay'">
-			<p>'NOT AUTHORIZED'</p>
-			<btn onclick="this.authorize" value="'Authorize wallet'" />
-		</div> -->
 
-		<alert type="`info`" title="'Not connected'" authorize="this.authorize">
-			<p>'Please connect you wallet to begin.'</p>
-			<btn onclick="this.authorize" value="'CONNECT'" />
+	<if cond="this.web3" authorize="this.authorize" account="this.account">
+		<if cond="!this.account" authorize="this.authorize">
+			<alert type="`info`" title="'Not connected'" authorize="this.authorize">
+				<p>'Please connect you wallet to begin.'</p>
+				<btn onclick="this.authorize" value="'CONNECT'" />
+			</alert>
+		</if>
+	</if>
+
+	<if cond="!this.web3">
+		<alert type="`error`" title="'No provider'">
+			<p>'No provider was detected.'</p>
+			<p>'Please make sure you have Metamask installed in your browser.'</p>
 		</alert>
 	</if>
 </component:app>
