@@ -53,8 +53,7 @@ export class D3Graph {
 		// 1. Define the drag behavior
 		this.dragHandler = d3.drag<Element, GraphNode>()
 			.on("start", function(event) {
-				d3.select(this).raise().attr("stroke", "black"); // Visual feedback
-				// that.pauseSim();
+				that.sim.alphaTarget(0.5).restart();
 			})
 			.on("drag", function(event) {
 				// 2. Update position based on event coordinates
@@ -67,21 +66,8 @@ export class D3Graph {
 				that.tick();
 			})
 			.on("end", function(event) {
-				d3.select(this).attr("stroke", null);
-				// that.updateSim();
+				that.sim.alphaTarget(0);
 			});
-
-		// 3. Apply to circles
-		// d3.selectAll("circle").call(this.dragHandler as any);
-
-		// Works incorrectly, see updateSim()
-		//
-		// this.sim = d3.forceSimulation(this.nodes)
-		// 	.force('link', d3.forceLink().links(this.edges))
-		// 	.force('charge', d3.forceManyBody().strength(-100))
-		// 	.force('center', d3.forceCenter(this.w / 2, this.h / 2))
-		// 	.on('tick', () => this.tick())
-		// ;
 	}
 	
 	tick() {
