@@ -373,3 +373,11 @@ input[type=button]:hover,
 .type_1 {
 	color: orange;
 }
+
+svg text {
+	cursor: pointer;
+}
+
+svg circle {
+	cursor: move;
+}

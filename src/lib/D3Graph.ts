@@ -180,6 +180,18 @@ export class D3Graph {
 			.attr('font-family', 'monospace')
 			.text(d => d.label)
 			.on('click', (e, d) => {this.onNodeClickHandler && this.onNodeClickHandler(d.addr)})
+			.on("mouseover", function(event, d) {
+				d3.select(this)
+				.transition()
+				.duration(200)
+				.attr('fill', d.type === 0 ? 'rgb(75, 100, 255)' : 'rgb(255, 100, 75)')
+			})
+			.on("mouseout", function(event, d) {
+				d3.select(this)
+				.transition()
+				.duration(200)
+				.attr('fill', 'white')
+			})
 		;
 		enterNodeLabels.merge(updNodeLabels as any).merge(exitNodeLabels as any);
 
