@@ -57,12 +57,12 @@ export class D3Graph {
 			})
 			.on("drag", function(event) {
 				// 2. Update position based on event coordinates
-				d3.select(this)
-					.attr("cx", event.x)
-					.attr("cy", event.y);
+				// d3.select(this)
+				// 	.attr("cx", event.x)
+				// 	.attr("cy", event.y);
 
-				(this as any).__data__.x = event.x;
-				(this as any).__data__.y = event.y;
+				(this as any).__data__.fx = event.x;
+				(this as any).__data__.fy = event.y;
 				that.tick();
 			})
 			.on("end", function(event) {
@@ -219,9 +219,9 @@ export class D3Graph {
 
 		// Seems excessive but works at least.
 		this.sim = d3.forceSimulation(this.nodes)
-			.force('link', d3.forceLink().links(this.edges).strength(-0.01))
-			.force('charge', d3.forceManyBody().strength(-10))
-			.force('center', d3.forceCenter(this.w / 2, this.h / 2))
+			.force('link', d3.forceLink().links(this.edges).distance(100))
+			.force('charge', d3.forceManyBody().distanceMax(200).distanceMin(50))
+			.force('center', d3.forceCenter(this.w / 2, this.h / 2).strength(0.01))
 			.on('tick', () => this.tick())
 		;
 	}
