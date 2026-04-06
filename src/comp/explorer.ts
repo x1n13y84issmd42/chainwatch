@@ -222,8 +222,10 @@ export async function onRender(ctx: Context<State>) {
 
 	// const i1 = ctx.state.dg.addAddress('0x111111111111111111111111111', 100, 0);
 	// const i2 = ctx.state.dg.addAddress('0x222222222222222222222222222', 200, 0);
+	// const i3 = ctx.state.dg.addAddress('0x333333333333333333333333333', 2000, 0);
 
 	// ctx.state.dg.addTx(i1, i2, 0);
+	// ctx.state.dg.addTx(i3, i1, 0);
 	// ctx.state.dg.updateSVGNodes();
 	// ctx.state.dg.updateSim();
 }

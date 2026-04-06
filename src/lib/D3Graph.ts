@@ -43,7 +43,8 @@ export class D3Graph {
 			.attr("orient", "auto")
 			.append("path")
 			.attr("d", "M0,-5L10,0L0,5")
-			.attr("fill", "rgba(255, 255, 255, 0.5)")
+			.attr("stroke", "rgba(255, 255, 255, 0.5)")
+			.attr("fill", "none")
 		;
 
 		// Works incorrectly, see updateSim()
@@ -67,7 +68,7 @@ export class D3Graph {
 		this.svg.select('#nodes').selectAll('circle')
 			.attr('cx', (n: any) => n.x)
 			.attr('cy', (n: any) => n.y)
-			// .attr('r', (n: any) => (n.balance / this.maxBalance + 0.2) * 20)
+			.attr('r', (n: any) => (n.balance / this.maxBalance + 0.2) * 20)
 		;
 
 		this.svg.select('#node-labels').selectAll('text')
