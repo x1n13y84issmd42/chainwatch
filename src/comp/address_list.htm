@@ -1,0 +1,10 @@
+<component:address_list>
+	<div class="'address_list'">
+		<for of="this.addresses" onclick="this.onclick">
+			<p class="`type_${item.type}`" onclick="this.onclick(item.a)">
+				<span class="'name'">item.name||item.a</span>
+				<span class="'w'">`${item.pathsTo} / ${item.pathsFrom} / ${item.numChainPaths}`</span>
+			</p>
+		</for>
+	</div>
+</component:address_list>

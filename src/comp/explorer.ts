@@ -1,20 +1,38 @@
-import { Transaction, Web3 } from 'web3';
+import { BlockHeaderOutput, Transaction, Web3 } from 'web3';
 import { D3Graph } from '../lib/D3Graph';
 import { Context } from '@x1n13y84issmd42/react-at-home';
 import { TxMonitor } from '../lib/TxMonitor';
+import { AddressNode, AddressType, TxGraph } from '../lib/TxGraph';
 
 export type State = Partial<{
 	ethereum: any;
 
 	addnode: Function;
 	onaddrsubmit: Function;
-	monitor: Function;
+	monitor_start: Function;
+	monitor_pause: Function;
 
 	width: number;
 	height: number;
 	
 	dg: D3Graph;
 	web3: Web3;
+
+	top_addresses: AddressNode[];
+	explore_address: Function;
+
+	txg: TxGraph;
+	monitor: TxMonitor;
+
+	stats: {
+		blockN: number;
+		txCount: number;
+		txSkippedCount: number;
+		walletAddrs: number;
+		contractAddrs: number;
+	};
+
+	timer: NodeJS.Timeout;
 }>;
 
 /*
@@ -29,9 +47,18 @@ export async function stateFn(state: State) {
 
 		state.addnode = function() {
 			const a = `${Math.floor(Math.random() * 9999)}`;
-			state.dg?.addAddress(a, 11);
+			state.dg?.addAddress(a, 11, 0);
 		}
-	
+
+		state.stats = {
+			blockN: 0,
+			txCount: 0,
+			txSkippedCount: 0,
+			walletAddrs: 0,
+			contractAddrs: 0,
+		};
+		
+		// - sidebar width & padding
 		state.width = window.innerWidth - 100 - 20;
 		state.height = window.innerHeight;
 		
@@ -50,7 +77,7 @@ export async function stateFn(state: State) {
 			}, 10000);
 
 			web3.eth.getBalance(addr).then(v => {
-				state.dg?.addAddress(addr, +web3.utils.fromWei(v, 'ether'));
+				state.dg?.addAddress(addr, +web3.utils.fromWei(v, 'ether'), 0);
 
 				const mon = new TxMonitor(web3);
 				mon.on('tx', async (tx: Transaction) => {
@@ -62,8 +89,8 @@ export async function stateFn(state: State) {
 							const fromBalance = +web3.utils.fromWei(await web3.eth.getBalance(tx.from), 'ether');
 							const toBalance = +web3.utils.fromWei(await web3.eth.getBalance(tx.to), 'ether');
 
-							const fromIndex = state.dg?.addAddress(tx.from, fromBalance);
-							const toIndex = state.dg?.addAddress(tx.to, toBalance);
+							const fromIndex = state.dg?.addAddress(tx.from, fromBalance, 0);
+							const toIndex = state.dg?.addAddress(tx.to, toBalance, 0);
 
 							state.dg?.addTx(fromIndex, toIndex, +web3.utils.fromWei(tx.value!, 'ether'))
 						}
@@ -73,27 +100,115 @@ export async function stateFn(state: State) {
 			});
 		}
 
-		// Monitor transactions.
-		state.monitor = function() {
-			const mon = new TxMonitor(web3);
-			mon.on('tx', async (tx: Transaction) => {
-				if (tx.value && tx.from && tx.to) {
-					const fromBalance = +web3.utils.fromWei(await web3.eth.getBalance(tx.from), 'ether');
-					const toBalance = +web3.utils.fromWei(await web3.eth.getBalance(tx.to), 'ether');
+		state.top_addresses = [
+			// {a: '1', type: 0, numChainPaths: 11} as any,
+			// {a: '2', type: 1, numChainPaths: 22} as any,
+			// {a: '3', type: 0, numChainPaths: 33} as any,
+		];
 
-					// Skipping too small txs to unclutter the screen
-					const tooSmallTx = 0.5;
-					if (fromBalance < tooSmallTx && toBalance < tooSmallTx) {
-						return;
+		state.explore_address = function(addr: string) {
+			console.log(`Exploring address`, addr);
+
+			if (state.txg && state.dg) {
+				state.dg.clear();
+
+				const an = state.txg.getAddress(addr);
+
+				state.txg.traversePathOut(an, (n, p) => {
+					if (p) {
+						const i1 = state.dg!.addAddress(n.a, n.balance, n.type);
+						const i2 = state.dg!.addAddress(p.a, p.balance, p.type);
+						state.dg?.addTx(i2, i1, 0);
 					}
+				});
 
-					const fromIndex = state.dg?.addAddress(tx.from!, fromBalance);
-					const toIndex = state.dg?.addAddress(tx.to!, toBalance);
+				state.txg.traversePathIn(an, (n, p) => {
+					if (p) {
+						const i1 = state.dg!.addAddress(n.a, n.balance, n.type);
+						const i2 = state.dg!.addAddress(p.a, p.balance, p.type);
+						state.dg?.addTx(i1, i2, 0);
+					}
+				});
 
-					state.dg?.addTx(fromIndex!, toIndex!, +web3.utils.fromWei(tx.value!, 'ether'))
+				state.dg.updateSVGNodes();
+			}
+		}
+
+		state.txg = new TxGraph(web3);
+
+		state.txg.onAddrChainData(addr => {
+			if (addr.type === AddressType.CONTRACT)
+				state.stats!.contractAddrs++;
+			else
+				state.stats!.walletAddrs++;
+		});
+
+		// Monitor transactions.
+		state.monitor_start = function() {
+			const mon = new TxMonitor(web3);
+			state.monitor = mon;
+
+			state.top_addresses = [];
+
+			if (state.timer) {
+				clearInterval(state.timer);
+			}
+			
+			state.timer = setInterval(() => {
+				const addresses = [...state.txg!.addressBook.values().filter(a => a.numChainPaths > 1)];
+				addresses.sort((a1, a2) => {
+					return a2.numChainPaths - a1.numChainPaths;
+				});
+				addresses.splice(40);
+				console.log(addresses);
+
+				state.top_addresses = addresses;
+				state.stats = state.stats;
+			}, 1000);
+
+			mon.on('block', async (b: BlockHeaderOutput) => {
+				state.stats!.blockN = b.number as number;
+			});
+
+			mon.on('tx', async (tx: Transaction) => {
+				if (tx.from && tx.to && tx.from !== tx.to) {
+					state.txg!.addTx(tx.from, tx.to, 0n);
+					state.stats!.txCount++;
+				} else {
+					state.stats!.txSkippedCount++;
 				}
+
+				// if (tx.value && tx.from && tx.to) {
+				// 	const fromBalance = +web3.utils.fromWei(await web3.eth.getBalance(tx.from), 'ether');
+				// 	const toBalance = +web3.utils.fromWei(await web3.eth.getBalance(tx.to), 'ether');
+
+				// 	// Skipping too small txs to unclutter the screen
+				// 	const tooSmallTx = 0.5;
+				// 	if (fromBalance < tooSmallTx && toBalance < tooSmallTx) {
+				// 		// console.log(`Skip too small.`);
+				// 		return;
+				// 	}
+
+				// 	const fromIndex = state.dg?.addAddress(tx.from!, fromBalance);
+				// 	const toIndex = state.dg?.addAddress(tx.to!, toBalance);
+
+				// 	state.dg?.addTx(fromIndex!, toIndex!, +web3.utils.fromWei(tx.value!, 'ether'))
+				// } else {
+				// 	// console.log(`Skip.`);
+				// }
 			});
 			mon.monitor().catch(console.error);
+		}
+
+		state.monitor_pause = function () {
+			state.monitor && state.monitor.stop();
+			delete state.monitor;
+			state.monitor = undefined;
+
+			if (state.timer) {
+				clearInterval(state.timer)
+				state.timer = undefined;
+			}
 		}
 	} else {
 		console.log(`NO ETH`);
@@ -104,4 +219,11 @@ export async function stateFn(state: State) {
 
 export async function onRender(ctx: Context<State>) {
 	ctx.state.dg = new D3Graph('#graph');
+
+	// const i1 = ctx.state.dg.addAddress('0x111111111111111111111111111', 100, 0);
+	// const i2 = ctx.state.dg.addAddress('0x222222222222222222222222222', 200, 0);
+
+	// ctx.state.dg.addTx(i1, i2, 0);
+	// ctx.state.dg.updateSVGNodes();
+	// ctx.state.dg.updateSim();
 }

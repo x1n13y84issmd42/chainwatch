@@ -14,7 +14,8 @@ html {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-image: url('/assets/dot_20.png');
+	/* background-image: url('/assets/dot_20.png'); */
+	background-image: url('/assets/dot_15.png');
 	background-repeat: repeat;
 }
 
@@ -31,7 +32,7 @@ html {
 	position: absolute;
 	z-index: 100;
 	top: 30px;
-	left: 120px;
+	right: 0;
     /* border: 1px red solid; */
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 20px 0 0 20px;
@@ -202,4 +203,112 @@ input[type=button]:hover,
 
 .alert > .content > p {
 	margin-bottom: 10px;
+}
+
+.address_list {
+	/* position: absolute;
+	z-index: 100;
+	top: 30px;
+	left: 120px;
+	width: 200px;
+	background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 20px; */
+}
+
+.address_list > p {
+	color: white;
+	font-family: monospace;
+	font-size: 8pt;
+	cursor: pointer;
+}
+
+.address_list > p:hover > * {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.address_list > p:hover {
+	font-weight: bold;
+}
+
+.address_list > p.type_1 {
+	color: #d82;
+}
+
+.address_list > p > .name {
+	padding-left: 10px;
+}
+
+.address_list > p > .w {
+	padding: 0 10px;
+	float: right;
+}
+
+#sidebar_wide {
+	position: absolute;
+	z-index: 1000;
+    left: 0;
+	width: 250px;
+    top: 30px;
+    bottom: 30px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0 20px 20px 0;
+}
+
+.button_bar {
+	margin: 10px;
+	text-align: right;
+}
+
+.button_bar > .button,
+.button_bar > input[type=button] {
+	padding: 5px;
+    border-radius: 10px;
+    border: 1px orange solid;
+    color: orange;
+    background-color: transparent;
+    transition: 
+		background-color 0.2s ease-out,
+		color 0.2s ease-out,
+		border-color 0.2s ease-out,
+		;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    font-size: 8pt;
+}
+
+.button_bar > .button:hover {
+	color: black;
+	background-color: orange;
+	border-color: orange;
+}
+
+.button_bar > .button.play {
+	text-indent: 4px;
+}
+
+.button_bar > .button.pause {
+	letter-spacing: -4px;
+    text-indent: 3px;
+}
+
+.stats {
+	font-family: monospace;
+    font-size: 8pt;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed gray;
+    margin: 0 10px 20px;
+    padding-bottom: 20px;
+}
+
+.stats > p {}
+
+.stats > p > .n {
+	color: #888;
+}
+
+.stats > p > .v {
+	float: right;
+	color: white;
 }

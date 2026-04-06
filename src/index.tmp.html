@@ -20,6 +20,17 @@
 	<div id="components" style="display:none;">
 
 
+<component:address_list>
+	<div class="'address_list'">
+		<for of="this.addresses" onclick="this.onclick">
+			<p class="`type_${item.type}`" onclick="this.onclick(item.a)">
+				<span class="'name'">item.name||item.a</span>
+				<span class="'w'">`${item.pathsTo} / ${item.pathsFrom} / ${item.numChainPaths}`</span>
+			</p>
+		</for>
+	</div>
+</component:address_list>
+
 <component:alert>
 	<div class="`alert type_${this.type}`">
 		<h1 class="'header'">this.title</h1>
@@ -57,6 +68,7 @@
 <component:btn>
 	<input
 		type="`button`"
+		class="`button ${this.class}`"
 		value="this.value"
 		id="this.id"
 		name="this.name"
@@ -64,9 +76,13 @@
 	/>
 </component:btn>
 
+<component:button_bar>
+	<div class="'button_bar'"></div>
+</component:button_bar>
+
 <component:explorer>
 	<div class="'explorer'" >
-		<sidebar
+		<!-- <sidebar
 			unauthorize="this.unauthorize"
 			addnode="this.addnode"
 			onaddrsubmit="this.onaddrsubmit"
@@ -74,8 +90,42 @@
 		>
 			<side_btn_input value="'ADD ADDR'" onsubmit="this.onaddrsubmit"></side_btn_input>
 			<side_btn value="'MONITOR'" onclick="this.monitor"></side_btn>
-			<!-- <side_btn value="'DISCONNECT'" onclick="this.unauthorize"></side_btn> -->
-		</sidebar>
+		</sidebar> -->
+		<sidebar_wide
+			unauthorize="this.unauthorize"
+			addnode="this.addnode"
+			onaddrsubmit="this.onaddrsubmit"
+			monitor_start="this.monitor_start"
+			monitor_pause="this.monitor_pause"
+			top_addresses="this.top_addresses"
+			explore_address="this.explore_address"
+			monitor="this.monitor"
+			stats="this.stats"
+		>
+			<button_bar
+				monitor="this.monitor"
+				monitor_start="this.monitor_start"
+				monitor_pause="this.monitor_pause"
+			>
+				<if cond="this.monitor" monitor_pause="this.monitor_pause">
+					<btn value="'▍▍'" onclick="this.monitor_pause" class="'pause'"></btn>
+				</if>
+				<if cond="!this.monitor" monitor_start="this.monitor_start">
+					<btn value="'▶'" onclick="this.monitor_start" class="'play'"></btn>
+				</if>
+			</button_bar>
+
+			<div class="'stats'">
+				<p><span class="'n'">'Block:'</span><span class="'v'">this.stats.blockN</span></p>
+				<p><span class="'n'">'Tx count:'</span><span class="'v'">this.stats.txCount</span></p>
+				<p><span class="'n'">'Tx skipped:'</span><span class="'v'">this.stats.txSkippedCount</span></p>
+				<p><span class="'n'">'Wallets:'</span><span class="'v'">this.stats.walletAddrs</span></p>
+				<p><span class="'n'">'Contracts:'</span><span class="'v'">this.stats.contractAddrs</span></p>
+			</div>
+
+			<address_list addresses="this.top_addresses" addrclick="this.explore_address"></address_list>
+		</sidebar_wide>
+
 
 		<svg id="graph" width="600" height="600" ></svg>
 	</div>
@@ -102,6 +152,10 @@
 <component:sidebar>
 	<div id="sidebar"></div>
 </component:sidebar>
+
+<component:sidebar_wide>
+	<div id="sidebar_wide"></div>
+</component:sidebar_wide>
 
 
 	</div>
