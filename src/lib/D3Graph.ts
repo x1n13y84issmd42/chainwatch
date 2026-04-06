@@ -233,9 +233,9 @@ export class D3Graph {
 
 		// Seems excessive but works at least.
 		this.sim = d3.forceSimulation(this.nodes)
-			.force('link', d3.forceLink().links(this.edges).distance(100))
-			.force('charge', d3.forceManyBody().distanceMax(200).distanceMin(50))
-			.force('center', d3.forceCenter(this.w / 2, this.h / 2).strength(0.01))
+			.force('link', d3.forceLink().links(this.edges).distance(100).strength(0.05))
+			.force('charge', d3.forceManyBody().distanceMax(100).distanceMin(0).strength(-100))
+			.force('center', d3.forceCenter(this.w / 2, this.h / 2).strength(1))
 			.on('tick', () => this.tick())
 		;
 	}
