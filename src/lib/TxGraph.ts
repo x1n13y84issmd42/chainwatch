@@ -33,7 +33,7 @@ export type AddressNode = TxEdges & {
 
 type AddressMap = Map<string, AddressNode>;
 
-type AddressNodeHandler = (a: AddressNode, p?: AddressNode) => void;
+type AddressNodeHandler = (a: AddressNode, p?: AddressNode, amnt?: number) => void;
 
 type AddrChainDataHandler = (a: AddressNode)=>void;
 
@@ -133,25 +133,25 @@ export class TxGraph {
 	}
 
 	traversePathOut(addr: AddressNode, h: AddressNodeHandler) {
-		function dfs(parentNode: AddressNode | undefined, node: AddressNode, seen: Set<AddressNode>) {
+		function dfs(parentNode: AddressNode | undefined, node: AddressNode, amount: number, seen: Set<AddressNode>) {
 			if (seen.has(node)) return;
-			h(node, parentNode);
+			h(node, parentNode, amount);
 			seen.add(node);
-			node.txFrom.forEach(e => dfs(node, e.to, seen));
+			node.txFrom.forEach(e => dfs(node, e.to, e.amount, seen));
 		}
 
-		dfs(undefined, addr, new Set());
+		dfs(undefined, addr, 0, new Set());
 	}
 
 	traversePathIn(addr: AddressNode, h: AddressNodeHandler) {
-		function dfs(parentNode: AddressNode | undefined, node: AddressNode, seen: Set<AddressNode>) {
+		function dfs(parentNode: AddressNode | undefined, node: AddressNode, amount: number, seen: Set<AddressNode>) {
 			if (seen.has(node)) return;
-			h(node, parentNode);
+			h(node, parentNode, amount);
 			seen.add(node);
-			node.txTo.forEach(e => dfs(node, e.from, seen));
+			node.txTo.forEach(e => dfs(node, e.from, e.amount, seen));
 		}
 
-		dfs(undefined, addr, new Set());
+		dfs(undefined, addr, 0, new Set());
 	}
 
 	private onAddrChainDataHandlers: AddrChainDataHandler[] = [];

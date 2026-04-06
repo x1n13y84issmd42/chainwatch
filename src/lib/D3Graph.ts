@@ -12,6 +12,9 @@ const MAX_EDGE_W = 6;
 
 const COLOR_NODE_WALLET = 'rgb(75, 100, 255)';
 const COLOR_NODE_CONTRACT = 'rgb(255, 100, 75)';
+const COLOR_EDGE = "rgba(255, 255, 255, 0.5)";
+// const COLOR_EDGE_ARROW = "rgb(127, 127, 127)";
+const COLOR_EDGE_ARROW = COLOR_EDGE;
 export class D3Graph {
 	protected svg!: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
 	protected w!: number;
@@ -42,7 +45,7 @@ export class D3Graph {
 		this.svg.select('#edges')
 			.append("marker")
 			.attr("id", "arrowhead_solid")
-			.attr("viewBox", "0 -6 10 12	")
+			.attr("viewBox", "0 -6 10 12")
 			.attr("markerUnits", "userSpaceOnUse")
 			.attr("refX", 15)     // Position of marker along the line (tip of the arrow)
 			.attr("refY", 0)
@@ -51,15 +54,15 @@ export class D3Graph {
 			.attr("orient", "auto")
 			.append("path")
 			.attr("d", "M0,-5L10,0L0,5")
-			.attr("stroke", "rgba(255, 255, 255, 0.5)")
+			.attr("stroke", COLOR_EDGE_ARROW)
 			.attr("stroke-width", 1)
-			.attr("fill", "rgba(255, 255, 255, 0.5)")
+			.attr("fill", COLOR_EDGE_ARROW)
 		;
 
 		this.svg.select('#edges')
 			.append("marker")
 			.attr("id", "arrowhead_dashed")
-			.attr("viewBox", "0 -6 10 12	")
+			.attr("viewBox", "0 -6 10 12")
 			.attr("markerUnits", "userSpaceOnUse")
 			.attr("refX", 15)     // Position of marker along the line (tip of the arrow)
 			.attr("refY", 0)
@@ -68,7 +71,7 @@ export class D3Graph {
 			.attr("orient", "auto")
 			.append("path")
 			.attr("d", "M0,-5L10,0L0,5")
-			.attr("stroke", "rgba(255, 255, 255, 0.5)")
+			.attr("stroke", COLOR_EDGE_ARROW)
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
 		;
@@ -83,7 +86,6 @@ export class D3Graph {
 			.on("drag", function(event) {
 				(this as any).__data__.fx = event.x;
 				(this as any).__data__.fy = event.y;
-				that.tick();
 			})
 			.on("end", function(event) {
 				that.sim.alphaTarget(0);
@@ -102,7 +104,7 @@ export class D3Graph {
 			.attr('y1', (d: any) => d.source.y)
 			.attr('x2', (d: any) => d.target.x)
 			.attr('y2', (d: any) => d.target.y)
-			.attr('stroke-width', (d: any) => d.amount ? (d.amount / this.maxTxAmount) * MAX_EDGE_W : 1)
+			.attr('stroke-width', (d: any) => d.amount ? (d.amount / this.maxTxAmount + 0.1) * MAX_EDGE_W : 1)
 			// .attr('stroke-width', 1)
 		;
 
@@ -183,6 +185,7 @@ export class D3Graph {
 		this.nodes = [];
 		this.edges = [];
 		this.maxBalance = 0;
+		this.maxTxAmount = 0;
 		this.updateSVGNodes();
 	}
 
@@ -194,7 +197,7 @@ export class D3Graph {
 			.attr('cx', d => d.x)
 			.attr('cy', d => d.y)
 			.attr('r', 7)
-			.attr('fill', d => d.type === 0 ? 'rgb(75, 100, 255)' : 'rgb(255, 100, 75)')
+			.attr('fill', d => d.type === 0 ? COLOR_NODE_WALLET : COLOR_NODE_CONTRACT)
 			.attr('stroke', 'rgba(255, 255, 255, 0.5)')
 			.attr('stroke-width', 3)
 			.call(this.dragHandler as any);
@@ -242,11 +245,11 @@ export class D3Graph {
 		const updEdges = this.svg.select('#edges').selectAll('line').data(this.edges);
 		const exitEdges = updEdges.exit().remove();
 		
-		let enterEdges = updEdges.enter()
+		const enterEdges = updEdges.enter()
 			.append('line')
 			.attr('stroke-width', d => d.amount ? (d.amount / this.maxTxAmount) * MAX_EDGE_W : 1)
 			.attr('stroke-dasharray', d => d.amount ? '9999999 1' : '5 2')
-			.style('stroke', 'rgba(255, 255, 255, 0.5)')
+			.style('stroke', COLOR_EDGE)
 			.attr("marker-end", d => d.amount ? "url(#arrowhead_solid)" : "url(#arrowhead_dashed)")
 		;
 		enterEdges.merge(updEdges as any).merge(exitEdges as any);

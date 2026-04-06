@@ -237,6 +237,7 @@ input[type=button]:hover,
 
 .small_list > p > .name {
 	padding-left: 10px;
+	text-transform: uppercase;
 }
 
 .small_list > p > .w {
