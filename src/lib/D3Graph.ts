@@ -2,11 +2,16 @@ import * as d3 from 'd3';
 import { AddressType } from './TxGraph';
 
 type Addr = {addr: string, balance?: number};
-type Tx = {source: number, target: number};
+type Tx = {source: number, target: number, amount: number};
 
 type GraphNode = Addr & {x: number, y: number} & {label: string, type: AddressType};
 type GraphEdge = Tx & Partial<{x1: number, y1: number, x2: number, y2: number}>;
 
+const MAX_NODE_R = 20;
+const MAX_EDGE_W = 6;
+
+const COLOR_NODE_WALLET = 'rgb(75, 100, 255)';
+const COLOR_NODE_CONTRACT = 'rgb(255, 100, 75)';
 export class D3Graph {
 	protected svg!: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
 	protected w!: number;
@@ -19,6 +24,7 @@ export class D3Graph {
 	protected sim!: d3.Simulation<GraphNode, undefined>;
 
 	protected maxBalance = 0;
+	protected maxTxAmount = 0;
 
 	constructor(selector: string) {
 		this.svg = d3.select(selector);
@@ -35,8 +41,9 @@ export class D3Graph {
 
 		this.svg.select('#edges')
 			.append("marker")
-			.attr("id", "arrowhead")
-			.attr("viewBox", "0 -5 10 10")
+			.attr("id", "arrowhead_solid")
+			.attr("viewBox", "0 -6 10 12	")
+			.attr("markerUnits", "userSpaceOnUse")
 			.attr("refX", 15)     // Position of marker along the line (tip of the arrow)
 			.attr("refY", 0)
 			.attr("markerWidth", 16)
@@ -45,6 +52,24 @@ export class D3Graph {
 			.append("path")
 			.attr("d", "M0,-5L10,0L0,5")
 			.attr("stroke", "rgba(255, 255, 255, 0.5)")
+			.attr("stroke-width", 1)
+			.attr("fill", "rgba(255, 255, 255, 0.5)")
+		;
+
+		this.svg.select('#edges')
+			.append("marker")
+			.attr("id", "arrowhead_dashed")
+			.attr("viewBox", "0 -6 10 12	")
+			.attr("markerUnits", "userSpaceOnUse")
+			.attr("refX", 15)     // Position of marker along the line (tip of the arrow)
+			.attr("refY", 0)
+			.attr("markerWidth", 16)
+			.attr("markerHeight", 16)
+			.attr("orient", "auto")
+			.append("path")
+			.attr("d", "M0,-5L10,0L0,5")
+			.attr("stroke", "rgba(255, 255, 255, 0.5)")
+			.attr("stroke-width", 1)
 			.attr("fill", "none")
 		;
 
@@ -77,12 +102,14 @@ export class D3Graph {
 			.attr('y1', (d: any) => d.source.y)
 			.attr('x2', (d: any) => d.target.x)
 			.attr('y2', (d: any) => d.target.y)
+			.attr('stroke-width', (d: any) => d.amount ? (d.amount / this.maxTxAmount) * MAX_EDGE_W : 1)
+			// .attr('stroke-width', 1)
 		;
 
 		this.svg.select('#nodes').selectAll('circle')
 			.attr('cx', (n: any) => n.x)
 			.attr('cy', (n: any) => n.y)
-			.attr('r', (n: any) => (n.balance / this.maxBalance + 0.2) * 20)
+			.attr('r', (n: any) => (n.balance / this.maxBalance + 0.2) * MAX_NODE_R)
 		;
 
 		this.svg.select('#node-labels').selectAll('text')
@@ -128,7 +155,7 @@ export class D3Graph {
 		return this.nodes.length - 1;
 	}
 
-	addTx(from: number, to: number, amnt: number) {
+	addTx(from: number, to: number, amount: number) {
 		//TODO: multiple txs are possible, but will do for now.
 		const txIndex = this.edges.findIndex(e => e.source === from && e.target === to);
 		if (txIndex != -1) {
@@ -136,12 +163,15 @@ export class D3Graph {
 			return;
 		}
 
+		this.maxTxAmount = Math.max(this.maxTxAmount, amount);
+
 		this.pauseSim();
 
 		// Adding an edge from n to a random node.
 		const e: GraphEdge = {
 			source: from,
 			target: to,
+			amount,
 		};
 
 		this.edges.push(e);
@@ -184,7 +214,7 @@ export class D3Graph {
 				d3.select(this)
 				.transition()
 				.duration(200)
-				.attr('fill', d.type === 0 ? 'rgb(75, 100, 255)' : 'rgb(255, 100, 75)')
+				.attr('fill', d.type === 0 ? COLOR_NODE_WALLET : COLOR_NODE_CONTRACT)
 			})
 			.on("mouseout", function(event, d) {
 				d3.select(this)
@@ -212,12 +242,12 @@ export class D3Graph {
 		const updEdges = this.svg.select('#edges').selectAll('line').data(this.edges);
 		const exitEdges = updEdges.exit().remove();
 		
-		const enterEdges = updEdges.enter()
+		let enterEdges = updEdges.enter()
 			.append('line')
-			.attr('stroke-width', 1)
-			.attr('stroke-dasharray', '8 3')
+			.attr('stroke-width', d => d.amount ? (d.amount / this.maxTxAmount) * MAX_EDGE_W : 1)
+			.attr('stroke-dasharray', d => d.amount ? '9999999 1' : '5 2')
 			.style('stroke', 'rgba(255, 255, 255, 0.5)')
-			.attr("marker-end", "url(#arrowhead)")
+			.attr("marker-end", d => d.amount ? "url(#arrowhead_solid)" : "url(#arrowhead_dashed)")
 		;
 		enterEdges.merge(updEdges as any).merge(exitEdges as any);
 	}

@@ -233,16 +233,16 @@ export async function onRender(ctx: Context<State>) {
 		ctx.state.select_address!(a);
 	});
 
-	const i1 = ctx.state.dg.addAddress('0x111111111111111111111111111', 100, 0);
-	const i2 = ctx.state.dg.addAddress('0x222222222222222222222222222', 200, 0);
-	const i3 = ctx.state.dg.addAddress('0x333333333333333333333333333', 2000, 0);
-	const i4 = ctx.state.dg.addAddress('0x444444444444444444444444444', 3000, 0);
-	const i5 = ctx.state.dg.addAddress('0x555555555555555555555555555', 3100, 0);
+	// const i1 = ctx.state.dg.addAddress('0x111111111111111111111111111', 100, 0);
+	// const i2 = ctx.state.dg.addAddress('0x222222222222222222222222222', 200, 0);
+	// const i3 = ctx.state.dg.addAddress('0x333333333333333333333333333', 2000, 0);
+	// const i4 = ctx.state.dg.addAddress('0x444444444444444444444444444', 3000, 0);
+	// const i5 = ctx.state.dg.addAddress('0x555555555555555555555555555', 3100, 0);
 
-	ctx.state.dg.addTx(i1, i2, 0);
-	ctx.state.dg.addTx(i3, i1, 0);
-	ctx.state.dg.addTx(i4, i2, 0);
-	ctx.state.dg.addTx(i5, i2, 0);
-	ctx.state.dg.updateSVGNodes();
-	ctx.state.dg.updateSim();
+	// ctx.state.dg.addTx(i1, i2, 0);
+	// ctx.state.dg.addTx(i3, i1, 10);
+	// ctx.state.dg.addTx(i4, i2, 20);
+	// ctx.state.dg.addTx(i5, i2, 0);
+	// ctx.state.dg.updateSVGNodes();
+	// ctx.state.dg.updateSim();
 }
