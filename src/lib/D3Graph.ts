@@ -14,6 +14,7 @@ export class D3Graph {
 
 	protected nodes: GraphNode[] = [];
 	protected edges: GraphEdge[] = [];
+	protected dragHandler: d3.DragBehavior<Element, GraphNode, any>;
 
 	protected sim!: d3.Simulation<GraphNode, undefined>;
 
@@ -46,6 +47,32 @@ export class D3Graph {
 			.attr("stroke", "rgba(255, 255, 255, 0.5)")
 			.attr("fill", "none")
 		;
+
+		const that = this;
+
+		// 1. Define the drag behavior
+		this.dragHandler = d3.drag<Element, GraphNode>()
+			.on("start", function(event) {
+				d3.select(this).raise().attr("stroke", "black"); // Visual feedback
+				// that.pauseSim();
+			})
+			.on("drag", function(event) {
+				// 2. Update position based on event coordinates
+				d3.select(this)
+					.attr("cx", event.x)
+					.attr("cy", event.y);
+
+				(this as any).__data__.x = event.x;
+				(this as any).__data__.y = event.y;
+				that.tick();
+			})
+			.on("end", function(event) {
+				d3.select(this).attr("stroke", null);
+				// that.updateSim();
+			});
+
+		// 3. Apply to circles
+		// d3.selectAll("circle").call(this.dragHandler as any);
 
 		// Works incorrectly, see updateSim()
 		//
@@ -153,6 +180,8 @@ export class D3Graph {
 			.attr('fill', d => d.type === 0 ? 'rgb(75, 100, 255)' : 'rgb(255, 100, 75)')
 			.attr('stroke', 'rgba(255, 255, 255, 0.5)')
 			.attr('stroke-width', 3)
+			.call(this.dragHandler as any);
+
 		;
 		enterNodes.merge(updNodes as any).merge(exitNodes as any);
 		
