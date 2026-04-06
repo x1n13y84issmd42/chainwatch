@@ -1,0 +1,22 @@
+<component:addr_info>
+	<div id="addr_info">
+		<div class="'container'">
+			<if cond="this.address" address="this.address" explore_address="this.explore_address">
+				<h2 class="`type_${this.address.type}`">this.address.type ? 'Contract' : 'Wallet'</h2>
+				<p class="'addr' + ` type_${this.address.type}`">this.address.a</p>
+
+				<p class="'balance'">this.address.balance + ' ETH'</p>
+				
+				<h3>'Incoming tx' + `(${this.address.txTo.length})`</h3>
+				<p></p>
+				<tx_list txs="this.address.txTo" on_addr_click="this.explore_address" d="'from'"></tx_list>
+				
+				<h3>'Outgoing tx' + `(${this.address.txFrom.length})`</h3>
+				<tx_list txs="this.address.txFrom" on_addr_click="this.explore_address" d="'to'"></tx_list>
+			</if>
+			<if cond="!this.address">
+				<p class="'no_address_selected'">'SELECT ADDRESS TO DISPLAY'</p>
+			</if>
+		</div>
+	</div>
+</component:addr_info>

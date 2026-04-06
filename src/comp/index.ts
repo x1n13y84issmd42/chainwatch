@@ -8,6 +8,8 @@ import * as side_btn_input from './side_btn_input';
 import * as alert from './alert';
 import * as address_list from './address_list';
 import * as button_bar from './button_bar';
+import * as addr_info from './addr_info';
+import * as tx_list from './tx_list';
 
 export function register(rah: Engine) {
 	rah.register('app', app.stateFn);
@@ -20,4 +22,6 @@ export function register(rah: Engine) {
 	rah.register('alert', alert.stateFn, alert.domFn);
 	rah.register('address_list', address_list.stateFn);
 	rah.register('button_bar', undefined, button_bar.domFn);
+	rah.register('addr_info', undefined, addr_info.domFn);
+	rah.register('tx_list', tx_list.stateFn);
 }

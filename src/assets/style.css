@@ -215,31 +215,31 @@ input[type=button]:hover,
     border-radius: 20px; */
 }
 
-.address_list > p {
+.small_list > p {
 	color: white;
 	font-family: monospace;
 	font-size: 8pt;
 	cursor: pointer;
 }
 
-.address_list > p:hover > * {
+.small_list > p:hover > * {
 	font-weight: bold;
 	text-decoration: underline;
 }
 
-.address_list > p:hover {
+.small_list > p:hover {
 	font-weight: bold;
 }
 
-.address_list > p.type_1 {
+.small_list > p.type_1 {
 	color: #d82;
 }
 
-.address_list > p > .name {
+.small_list > p > .name {
 	padding-left: 10px;
 }
 
-.address_list > p > .w {
+.small_list > p > .w {
 	padding: 0 10px;
 	float: right;
 }
@@ -311,4 +311,65 @@ input[type=button]:hover,
 .stats > p > .v {
 	float: right;
 	color: white;
+}
+
+#addr_info {
+	position: absolute;
+	z-index: 1000;
+    left: 270px;
+	width: 250px;
+    top: 30px;
+    bottom: 30px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+	overflow: auto;
+    scrollbar-width: none;
+}
+
+#addr_info > .container {
+	margin: 0 10px 10px 10px;
+}
+
+#addr_info .no_address_selected {
+	color: rgba(255, 255, 255, 0.1);
+    font-weight: 100;
+    font-family: monospace;
+    font-size: 16pt;
+    text-align: center;
+    line-height: 42pt;
+    margin-top: 200px;
+	letter-spacing: 3px;
+}
+
+#addr_info h3,
+#addr_info h2 {
+	font-family: sans-serif;
+    margin-top: 10px;
+    /* color: #888; */
+    font-weight: 100;
+}
+
+#addr_info p {
+	font-family: monospace;
+	/* font-size: 12pt; */
+	/* color: white; */
+	text-wrap: wrap;
+	word-wrap: break-word;
+}
+
+#addr_info p.addr {
+	font-size: 10pt;
+}
+
+#addr_info p.balance {
+	font-size: 24pt;
+	margin: 10pt 10pt 20pt;
+}
+
+.type_0 {
+	color: white;
+}
+
+.type_1 {
+	color: orange;
 }

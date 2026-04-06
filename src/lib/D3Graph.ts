@@ -22,7 +22,7 @@ export class D3Graph {
 
 	constructor(selector: string) {
 		this.svg = d3.select(selector);
-		this.svg.attr('width', window.innerWidth - (250 + 20));
+		this.svg.attr('width', window.innerWidth - (250 + 20 + 250 + 20));
 		this.svg.attr('height', window.innerHeight - 60);
 		this.w = +this.svg.attr('width');
 		this.h = +this.svg.attr('height');
@@ -56,11 +56,6 @@ export class D3Graph {
 				that.sim.alphaTarget(0.5).restart();
 			})
 			.on("drag", function(event) {
-				// 2. Update position based on event coordinates
-				// d3.select(this)
-				// 	.attr("cx", event.x)
-				// 	.attr("cy", event.y);
-
 				(this as any).__data__.fx = event.x;
 				(this as any).__data__.fy = event.y;
 				that.tick();
@@ -68,6 +63,12 @@ export class D3Graph {
 			.on("end", function(event) {
 				that.sim.alphaTarget(0);
 			});
+	}
+
+	private onNodeClickHandler?: (a: string) => void;
+
+	onNodeClick(handler: (a: string)=>void) {
+		this.onNodeClickHandler = handler;
 	}
 	
 	tick() {
@@ -178,6 +179,7 @@ export class D3Graph {
 			.attr('fill', 'white')
 			.attr('font-family', 'monospace')
 			.text(d => d.label)
+			.on('click', (e, d) => {this.onNodeClickHandler && this.onNodeClickHandler(d.addr)})
 		;
 		enterNodeLabels.merge(updNodeLabels as any).merge(exitNodeLabels as any);
 

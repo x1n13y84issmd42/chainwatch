@@ -20,8 +20,31 @@
 	<div id="components" style="display:none;">
 
 
+<component:addr_info>
+	<div id="addr_info">
+		<div class="'container'">
+			<if cond="this.address" address="this.address" explore_address="this.explore_address">
+				<h2 class="`type_${this.address.type}`">this.address.type ? 'Contract' : 'Wallet'</h2>
+				<p class="'addr' + ` type_${this.address.type}`">this.address.a</p>
+
+				<p class="'balance'">this.address.balance + ' ETH'</p>
+				
+				<h3>'Incoming tx' + `(${this.address.txTo.length})`</h3>
+				<p></p>
+				<tx_list txs="this.address.txTo" on_addr_click="this.explore_address" d="'from'"></tx_list>
+				
+				<h3>'Outgoing tx' + `(${this.address.txFrom.length})`</h3>
+				<tx_list txs="this.address.txFrom" on_addr_click="this.explore_address" d="'to'"></tx_list>
+			</if>
+			<if cond="!this.address">
+				<p class="'no_address_selected'">'SELECT ADDRESS TO DISPLAY'</p>
+			</if>
+		</div>
+	</div>
+</component:addr_info>
+
 <component:address_list>
-	<div class="'address_list'">
+	<div class="'address_list small_list'">
 		<for of="this.addresses" onclick="this.onclick">
 			<p class="`type_${item.type}`" onclick="this.onclick(item.a)">
 				<span class="'name'">item.name||item.a</span>
@@ -99,6 +122,7 @@
 			monitor_pause="this.monitor_pause"
 			top_addresses="this.top_addresses"
 			explore_address="this.explore_address"
+			select_address="this.select_address"
 			monitor="this.monitor"
 			stats="this.stats"
 		>
@@ -126,6 +150,7 @@
 			<address_list addresses="this.top_addresses" addrclick="this.explore_address"></address_list>
 		</sidebar_wide>
 
+		<addr_info address="this.selected_address" explore_address="this.select_address"></addr_info>
 
 		<svg id="graph" width="600" height="600" ></svg>
 	</div>
@@ -156,6 +181,17 @@
 <component:sidebar_wide>
 	<div id="sidebar_wide"></div>
 </component:sidebar_wide>
+
+<component:tx_list>
+	<div class="'tx_list small_list'">
+		<for of="this.txs" onclick="this.onclick" d="this.d">
+			<p class="`type_${item[this.d].type}`" onclick="this.onclick(item[this.d].a)">
+				<span class="'name'">item[this.d].name||item[this.d].a</span>
+				<span class="'w'">item.amount</span>
+			</p>
+		</for>
+	</div>
+</component:tx_list>
 
 
 	</div>

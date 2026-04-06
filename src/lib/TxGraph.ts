@@ -1,7 +1,7 @@
 import Web3 from "web3";
 
 type TxEdge = {
-	amount: bigint;
+	amount: number;
 	from: AddressNode;
 	to: AddressNode;
 };
@@ -44,7 +44,7 @@ export class TxGraph {
 		///
 	}
 
-	addTx(fromAddr: string, toAddr: string, amount: bigint) {
+	addTx(fromAddr: string, toAddr: string, amount: number) {
 		const from = this.getAddress(fromAddr);
 		const to = this.getAddress(toAddr);
 

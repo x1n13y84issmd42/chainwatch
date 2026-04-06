@@ -17,6 +17,7 @@
 			monitor_pause="this.monitor_pause"
 			top_addresses="this.top_addresses"
 			explore_address="this.explore_address"
+			select_address="this.select_address"
 			monitor="this.monitor"
 			stats="this.stats"
 		>
@@ -44,6 +45,7 @@
 			<address_list addresses="this.top_addresses" addrclick="this.explore_address"></address_list>
 		</sidebar_wide>
 
+		<addr_info address="this.selected_address" explore_address="this.select_address"></addr_info>
 
 		<svg id="graph" width="600" height="600" ></svg>
 	</div>

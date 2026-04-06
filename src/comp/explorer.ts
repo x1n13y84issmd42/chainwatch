@@ -20,6 +20,8 @@ export type State = Partial<{
 
 	top_addresses: AddressNode[];
 	explore_address: Function;
+	select_address: Function;
+	selected_address: AddressNode;
 
 	txg: TxGraph;
 	monitor: TxMonitor;
@@ -100,6 +102,11 @@ export async function stateFn(state: State) {
 			});
 		}
 
+		state.select_address = function(a: string) {
+			const addr = state.txg?.getAddress(a);
+			state.selected_address = addr;
+		}
+
 		state.top_addresses = [
 			// {a: '1', type: 0, numChainPaths: 11} as any,
 			// {a: '2', type: 1, numChainPaths: 22} as any,
@@ -132,6 +139,8 @@ export async function stateFn(state: State) {
 
 				state.dg.updateSVGNodes();
 			}
+
+			state.select_address!(addr);
 		}
 
 		state.txg = new TxGraph(web3);
@@ -172,8 +181,9 @@ export async function stateFn(state: State) {
 
 			mon.on('tx', async (tx: Transaction) => {
 				if (tx.from && tx.to && tx.from !== tx.to) {
-					state.txg!.addTx(tx.from, tx.to, 0n);
+					state.txg!.addTx(tx.from, tx.to, +web3.utils.fromWei(tx.value||0n, 'ether'));
 					state.stats!.txCount++;
+					// console.log(tx.value);
 				} else {
 					state.stats!.txSkippedCount++;
 				}
@@ -219,17 +229,20 @@ export async function stateFn(state: State) {
 
 export async function onRender(ctx: Context<State>) {
 	ctx.state.dg = new D3Graph('#graph');
+	ctx.state.dg.onNodeClick(a => {
+		ctx.state.select_address!(a);
+	});
 
-	// const i1 = ctx.state.dg.addAddress('0x111111111111111111111111111', 100, 0);
-	// const i2 = ctx.state.dg.addAddress('0x222222222222222222222222222', 200, 0);
-	// const i3 = ctx.state.dg.addAddress('0x333333333333333333333333333', 2000, 0);
-	// const i4 = ctx.state.dg.addAddress('0x444444444444444444444444444', 3000, 0);
-	// const i5 = ctx.state.dg.addAddress('0x555555555555555555555555555', 3100, 0);
+	const i1 = ctx.state.dg.addAddress('0x111111111111111111111111111', 100, 0);
+	const i2 = ctx.state.dg.addAddress('0x222222222222222222222222222', 200, 0);
+	const i3 = ctx.state.dg.addAddress('0x333333333333333333333333333', 2000, 0);
+	const i4 = ctx.state.dg.addAddress('0x444444444444444444444444444', 3000, 0);
+	const i5 = ctx.state.dg.addAddress('0x555555555555555555555555555', 3100, 0);
 
-	// ctx.state.dg.addTx(i1, i2, 0);
-	// ctx.state.dg.addTx(i3, i1, 0);
-	// ctx.state.dg.addTx(i4, i2, 0);
-	// ctx.state.dg.addTx(i5, i2, 0);
-	// ctx.state.dg.updateSVGNodes();
-	// ctx.state.dg.updateSim();
+	ctx.state.dg.addTx(i1, i2, 0);
+	ctx.state.dg.addTx(i3, i1, 0);
+	ctx.state.dg.addTx(i4, i2, 0);
+	ctx.state.dg.addTx(i5, i2, 0);
+	ctx.state.dg.updateSVGNodes();
+	ctx.state.dg.updateSim();
 }
