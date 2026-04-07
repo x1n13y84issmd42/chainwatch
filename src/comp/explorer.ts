@@ -76,7 +76,7 @@ export async function stateFn(state: State) {
 				state.txg.traverseTx(an, (tx) => {
 					const i1 = state.dg!.addAddress(tx.from.a, tx.from.balance, tx.from.type);
 					const i2 = state.dg!.addAddress(tx.to.a, tx.to.balance, tx.to.type);
-					state.dg?.addTx(i2, i1, tx.amount);
+					state.dg?.addTx(i1, i2, tx.amount);
 				}, 50);
 
 				state.dg.updateSVGNodes();
