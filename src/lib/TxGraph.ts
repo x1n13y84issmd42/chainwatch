@@ -2,6 +2,7 @@ import Web3 from "web3";
 import ENS from './ENS';
 
 type TxEdge = {
+	hash: string;
 	amount: number;
 	from: AddressNode;
 	to: AddressNode;
@@ -35,7 +36,7 @@ export type AddressNode = TxEdges & {
 
 type AddressMap = Map<string, AddressNode>;
 
-type AddressNodeHandler = (a: AddressNode, p?: AddressNode, amnt?: number) => void;
+type AddressNodeHandler = (a: AddressNode, p?: AddressNode, amnt?: number, seen?: Set<AddressNode>) => void;
 
 type AddrChainDataHandler = (a: AddressNode)=>void;
 
@@ -46,7 +47,7 @@ export class TxGraph {
 		///
 	}
 
-	addTx(fromAddr: string, toAddr: string, amount: number) {
+	addTx(fromAddr: string, toAddr: string, amount: number, hash?: string) {
 		const from = this.getAddress(fromAddr);
 		const to = this.getAddress(toAddr);
 
@@ -54,6 +55,7 @@ export class TxGraph {
 			from,
 			to,
 			amount,
+			hash: hash || '',
 		};
 
 		this.addFromTx(from, tx);
@@ -138,7 +140,7 @@ export class TxGraph {
 	traversePathOut(addr: AddressNode, h: AddressNodeHandler) {
 		function dfs(parentNode: AddressNode | undefined, node: AddressNode, amount: number, seen: Set<AddressNode>) {
 			if (seen.has(node)) return;
-			h(node, parentNode, amount);
+			h(node, parentNode, amount, seen);
 			seen.add(node);
 			node.txFrom.forEach(e => dfs(node, e.to, e.amount, seen));
 		}
@@ -149,12 +151,29 @@ export class TxGraph {
 	traversePathIn(addr: AddressNode, h: AddressNodeHandler) {
 		function dfs(parentNode: AddressNode | undefined, node: AddressNode, amount: number, seen: Set<AddressNode>) {
 			if (seen.has(node)) return;
-			h(node, parentNode, amount);
+			h(node, parentNode, amount, seen);
 			seen.add(node);
 			node.txTo.forEach(e => dfs(node, e.from, e.amount, seen));
 		}
 
 		dfs(undefined, addr, 0, new Set());
+	}
+	
+	traverseTx(addr: AddressNode, h: (tx: TxEdge)=>void, txLimit: number) {
+		function dfs(tx: TxEdge, seen: Set<string>) {
+			if (seen.size >= txLimit) return;
+			if (seen.has(tx.hash)) return;
+			h(tx);
+			seen.add(tx.hash);
+			tx.from.txTo.forEach(e => dfs(e, seen));
+			tx.from.txFrom.forEach(e => dfs(e, seen));
+			tx.to.txTo.forEach(e => dfs(e, seen));
+			tx.to.txFrom.forEach(e => dfs(e, seen));
+		}
+		
+		const s: Set<string> = new Set();
+		addr.txTo.forEach(e => dfs(e, s));
+		addr.txFrom.forEach(e => dfs(e, s));
 	}
 
 	private onAddrChainDataHandlers: AddrChainDataHandler[] = [];

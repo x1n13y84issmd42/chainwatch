@@ -73,21 +73,11 @@ export async function stateFn(state: State) {
 
 				const an = state.txg.getAddress(addr);
 
-				state.txg.traversePathOut(an, (n, p, a) => {
-					if (p) {
-						const i1 = state.dg!.addAddress(n.a, n.balance, n.type);
-						const i2 = state.dg!.addAddress(p.a, p.balance, p.type);
-						state.dg?.addTx(i2, i1, a||0);
-					}
-				});
-
-				state.txg.traversePathIn(an, (n, p, a) => {
-					if (p) {
-						const i1 = state.dg!.addAddress(n.a, n.balance, n.type);
-						const i2 = state.dg!.addAddress(p.a, p.balance, p.type);
-						state.dg?.addTx(i1, i2, a||0);
-					}
-				});
+				state.txg.traverseTx(an, (tx) => {
+					const i1 = state.dg!.addAddress(tx.from.a, tx.from.balance, tx.from.type);
+					const i2 = state.dg!.addAddress(tx.to.a, tx.to.balance, tx.to.type);
+					state.dg?.addTx(i2, i1, tx.amount);
+				}, 50);
 
 				state.dg.updateSVGNodes();
 			}
@@ -132,8 +122,9 @@ export async function stateFn(state: State) {
 			});
 
 			mon.on('tx', async (tx: Transaction) => {
+				console.log('tx', tx);
 				if (tx.from && tx.to && tx.from !== tx.to) {
-					state.txg!.addTx(tx.from, tx.to, +web3.utils.fromWei(tx.value||0n, 'ether'));
+					state.txg!.addTx(tx.from, tx.to, +web3.utils.fromWei(tx.value||0n, 'ether'), (tx as any).hash);
 					state.stats!.txCount++;
 				} else {
 					state.stats!.txSkippedCount++;
