@@ -52,7 +52,7 @@
 	<div class="'address_list small_list'">
 		<for of="this.addresses" onclick="this.onclick">
 			<p class="`type_${item.type}`" onclick="this.onclick(item.a)">
-				<span class="'name'">item.name||item.as</span>
+				<span class="'name ' + (item.name ? 'full' : 'addr')">item.name||item.as</span>
 				<span class="'w'">`${item.pathsTo} / ${item.pathsFrom} / ${item.numChainPaths}`</span>
 			</p>
 		</for>
@@ -191,7 +191,7 @@
 	<div class="'tx_list small_list'">
 		<for of="this.txs" onclick="this.onclick" d="this.d">
 			<p class="`type_${item[this.d].type}`" onclick="this.onclick(item[this.d].a)">
-				<span class="'name'">item[this.d].name||item[this.d].as</span>
+				<span class="'name ' + (item[this.d].name ? 'full' : 'addr')">item[this.d].name||item[this.d].as</span>
 				<span class="'w'">item.amount</span>
 			</p>
 		</for>

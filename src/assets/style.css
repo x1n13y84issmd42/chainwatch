@@ -240,6 +240,9 @@ input[type=button]:hover,
 	padding-left: 10px;
 	text-transform: uppercase;
 }
+.small_list > p > .name.addr {
+	opacity: 0.5;
+}
 
 .small_list > p > .w {
 	padding: 0 10px;
