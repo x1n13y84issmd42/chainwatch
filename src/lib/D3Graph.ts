@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { AddressType } from './TxGraph';
+import ENS from './ENS';
 
 type Addr = {addr: string, balance?: number};
 type Tx = {source: number, target: number, amount: number};
@@ -141,12 +142,14 @@ export class D3Graph {
 
 		this.maxBalance = Math.max(this.maxBalance, balance);
 
+		const name = ENS[addr] || `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`;
+		
 		const n: GraphNode = {
 			addr,
 			balance,
 			x: Math.floor(this.w / 2 + Math.random() * 100 - 50),
 			y: Math.floor(this.h / 2 + Math.random() * 100 - 50),
-			label: `${addr.substring(0, 6)}...${addr.substring(addr.length-4)} (${balance?.toFixed(2)})`,
+			label: name,
 			type,
 		};
 

@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import ENS from './ENS';
 
 type TxEdge = {
 	amount: number;
@@ -18,7 +19,8 @@ export type TxEdges = {
 
 export type AddressNode = TxEdges & {
 	a: string;
-	name: string;
+	as: string; // Shortened address
+	name?: string;
 	balance: number;
 
 	type: AddressType;
@@ -90,7 +92,8 @@ export class TxGraph {
 		if (! this.addressBook.has(addr)) {
 			this.addressBook.set(addr, {
 				a: addr,
-				name: `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`,
+				name: ENS[addr],
+				as: `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`,
 				balance: 0,
 				type: AddressType.WALLET,
 				pathsFrom: 0,

@@ -2,8 +2,13 @@
 	<div id="addr_info">
 		<div class="'container'">
 			<if cond="this.address" address="this.address" explore_address="this.explore_address">
-				<h2 class="`type_${this.address.type}`">this.address.type ? 'Contract' : 'Wallet'</h2>
+				<if cond="this.address.name" address="this.address">
+					<h2 class="'name' + ` type_${this.address.type}`">this.address.name</h2>
+				</if>
+
+				<h4 class="`type_${this.address.type}`">this.address.type ? 'Contract' : 'Wallet'</h4>
 				<p class="'addr' + ` type_${this.address.type}`">this.address.a</p>
+				<a href="`https://etherscan.io/address/${this.address.a}`" target="'_blank'" class="'etherscan'">'info'</a>
 
 				<p class="'balance'">this.address.balance + ' ETH'</p>
 				

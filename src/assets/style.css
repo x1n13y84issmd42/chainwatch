@@ -343,12 +343,28 @@ input[type=button]:hover,
 	letter-spacing: 3px;
 }
 
+#addr_info a.etherscan {
+	padding: 1pt 3pt;
+    display: inline-block;
+    font-size: 10pt;
+    font-family: monospace;
+    text-decoration: none;
+    border-radius: 3px;
+    background: rgb(75, 100, 255);
+    color: white;
+}
+
+#addr_info h4,
 #addr_info h3,
 #addr_info h2 {
 	font-family: sans-serif;
     margin-top: 10px;
     /* color: #888; */
     font-weight: 100;
+}
+
+#addr_info h2.name {
+	margin-bottom: 20px;
 }
 
 #addr_info p {
