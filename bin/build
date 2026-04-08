@@ -1,7 +1,7 @@
 #!/bin/bash
 
-rm -rf ./dist
-mkdir ./dist
+rm -rf ./build
+mkdir ./build
 
 function log {
 	_IFS=$IFS && IFS='' && echo -e "\e[33mbuild\e[0m" $@ >&2 && IFS=$_IFS
@@ -34,9 +34,9 @@ function bundle {
 	log "$OUTFILE is ready.\n"
 }
 
-bundle src/index.tmp.html \
+bundle build/index.html \
 	src/partials/prologue.htm \
 	src/comp/*.htm \
 	src/partials/epilogue.htm \
 && \
-npx webpack --mode development
+npx webpack --mode production
