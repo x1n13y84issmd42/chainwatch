@@ -9,7 +9,6 @@ module.exports = {
   output: {
     filename: 'dist/app.js',
     path: path.resolve(__root, '.'),
-    publicPath: './',
     clean: false,
     assetModuleFilename: 'dist/assets/[name][ext]',
   },
@@ -26,15 +25,11 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
-      },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
-        generator: {
-          publicPath: '../../'
-        }
+        test: /\.scss$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader'],
       },
     ],
   },
