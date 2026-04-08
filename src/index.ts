@@ -1,3 +1,5 @@
+import './assets';
+
 import { Engine, Context, register } from '@x1n13y84issmd42/react-at-home';
 import { register as register2} from './comp';
 

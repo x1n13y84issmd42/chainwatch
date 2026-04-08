@@ -1,6 +1,8 @@
 #!/bin/bash
 
+rm -rf ./build
 rm -rf ./dist
+mkdir ./build
 mkdir ./dist
 
 function log {
@@ -34,9 +36,9 @@ function bundle {
 	log "$OUTFILE is ready.\n"
 }
 
-bundle src/index.tmp.html \
+bundle build/index.html \
 	src/partials/prologue.htm \
 	src/comp/*.htm \
 	src/partials/epilogue.htm \
 && \
-npx webpack --mode development
+npx webpack --config .config/webpack.build.cjs --mode production
