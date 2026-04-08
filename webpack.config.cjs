@@ -11,9 +11,9 @@ module.exports = {
     path: path.resolve(__dirname, '.'),
     publicPath: '/',
     clean: false,
-    assetModuleFilename: 'dist/assets_module'
+    assetModuleFilename: 'dist/assets/[name][ext]',
   },
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -23,9 +23,8 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'], // Processes CSS
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
-      // You can still use Asset Modules for images inside your CSS
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
@@ -40,13 +39,8 @@ module.exports = {
       template: path.resolve(__dirname, 'build/index.html'),
       filename: 'index.html'
     }),
-    // new CopyWebpackPlugin({
-    //   patterns: [
-    //     {from: './src/assets', to: './dist/assets'}
-    //   ]
-    // }),
     new MiniCssExtractPlugin({
-      filename: 'src/assets/style.css',
+      filename: 'dist/assets/style.css',
     }),
   ],
   devServer: {
