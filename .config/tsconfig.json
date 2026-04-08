@@ -1,16 +1,16 @@
 {
 	"include": [
-		"./src/**/*",
+		"../src/**/*",
 		// "../shared/q.ts"
 	],
 
 	"exclude": [
-		"./node_modules",
-		"./dist"
+		"../node_modules",
+		"../dist"
 	],
 
 	"compilerOptions": {
-		"rootDir": ".",
+		"rootDir": "..",
 		"outDir": "dist",
 
 		"target": "ESNext",
