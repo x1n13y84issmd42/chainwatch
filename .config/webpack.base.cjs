@@ -5,7 +5,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const __root = path.resolve(__dirname, '..');
 
 module.exports = {
-  mode: 'production',
   entry: path.resolve(__root, './src/index.ts'),
   output: {
     filename: 'dist/app.js',
@@ -14,7 +13,6 @@ module.exports = {
     clean: false,
     assetModuleFilename: 'dist/assets/[name][ext]',
   },
-  // devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -52,17 +50,4 @@ module.exports = {
       filename: 'dist/assets/style.css',
     }),
   ],
-  devServer: {
-    static: path.resolve(__root, 'dist'),
-    port: 80,
-    open: false,
-  },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new (require('terser-webpack-plugin'))({
-        extractComments: false, // Prevents generating .LICENSE.txt files
-      }),
-    ],
-  },
 };

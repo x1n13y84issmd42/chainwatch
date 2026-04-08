@@ -39,4 +39,4 @@ bundle build/index.html \
 	src/comp/*.htm \
 	src/partials/epilogue.htm \
 && \
-npx webpack serve --mode development
+npx webpack serve --config .config/webpack.dev.cjs --mode development

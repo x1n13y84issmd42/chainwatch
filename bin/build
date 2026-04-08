@@ -41,4 +41,4 @@ bundle build/index.html \
 	src/comp/*.htm \
 	src/partials/epilogue.htm \
 && \
-npx webpack --config .config/webpack.config.cjs --mode production
+npx webpack --config .config/webpack.build.cjs --mode production
