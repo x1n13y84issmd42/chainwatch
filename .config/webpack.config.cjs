@@ -1,14 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const __root = path.resolve(__dirname, '..');
 
 module.exports = {
   mode: 'production',
-  entry: path.resolve(__dirname, './src/index.ts'),
+  entry: path.resolve(__root, './src/index.ts'),
   output: {
     filename: 'dist/app.js',
-    path: path.resolve(__dirname, '.'),
+    path: path.resolve(__root, '.'),
     publicPath: './',
     clean: false,
     assetModuleFilename: 'dist/assets/[name][ext]',
@@ -39,7 +40,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'build/index.html'),
+      template: path.resolve(__root, 'build/index.html'),
       filename: 'index.html'
     }),
     new MiniCssExtractPlugin({
@@ -47,7 +48,7 @@ module.exports = {
     }),
   ],
   devServer: {
-    static: path.resolve(__dirname, 'dist'),
+    static: path.resolve(__root, 'dist'),
     port: 80,
     open: false,
   },
