@@ -1,15 +1,17 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'production',
   entry: path.resolve(__dirname, './src/index.ts'),
   output: {
-    filename: 'app.js',
-    path: path.resolve(__dirname, 'dist'),
-    clean: true,
+    filename: 'dist/app.js',
+    path: path.resolve(__dirname, '.'),
     publicPath: '/',
+    clean: false,
+    assetModuleFilename: 'dist/assets_module'
   },
   devtool: 'inline-source-map',
   module: {
@@ -19,6 +21,15 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'], // Processes CSS
+      },
+      // You can still use Asset Modules for images inside your CSS
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
     ],
   },
   resolve: {
@@ -26,12 +37,16 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'build/index.html'), // Path to your source HTML file
+      template: path.resolve(__dirname, 'build/index.html'),
+      filename: 'index.html'
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {from: './src/assets', to: './assets'}
-      ]
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {from: './src/assets', to: './dist/assets'}
+    //   ]
+    // }),
+    new MiniCssExtractPlugin({
+      filename: 'src/assets/style.css',
     }),
   ],
   devServer: {

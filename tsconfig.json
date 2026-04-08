@@ -26,6 +26,7 @@
 		"sourceMap": false,
 		"forceConsistentCasingInFileNames": false,
 		"esModuleInterop": true,
+		"noUncheckedSideEffectImports": false,
 
 		"lib": [
 			"dom",
