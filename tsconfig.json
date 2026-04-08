@@ -14,8 +14,8 @@
 		"outDir": "dist",
 
 		"target": "ESNext",
-		"moduleResolution": "nodenext",
-		"module": "nodenext",
+		"moduleResolution": "bundler",
+		"module": "es2015",
 
 		"allowJs": false,
 		"experimentalDecorators": true,
