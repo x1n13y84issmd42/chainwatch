@@ -77,7 +77,7 @@ export async function stateFn(state: State) {
 					const i1 = state.dg!.addAddress(tx.from.a, tx.from.balance, tx.from.type);
 					const i2 = state.dg!.addAddress(tx.to.a, tx.to.balance, tx.to.type);
 					state.dg?.addTx(i1, i2, tx.amount);
-				}, 50);
+				}, 70);
 
 				state.dg.updateSVGNodes();
 			}
@@ -99,19 +99,20 @@ export async function stateFn(state: State) {
 			const mon = new TxMonitor(web3);
 			state.monitor = mon;
 
-			state.top_addresses = [];
-
 			if (state.timer) {
 				clearInterval(state.timer);
 			}
 			
 			state.timer = setInterval(() => {
-				const addresses = [...state.txg!.addressBook.values().filter(a => a.numChainPaths > 1)];
+				const addresses: AddressNode[] = [];
+				//TODO: maintain top addresses in a heap/bin tree.
+				for (let a of state.txg!.addressBook.values()) {
+					if (a.numChainPaths > 1) addresses.push(a);
+				}
 				addresses.sort((a1, a2) => {
 					return a2.numChainPaths - a1.numChainPaths;
 				});
 				addresses.splice(40);
-				console.log(addresses);
 
 				state.top_addresses = addresses;
 				state.stats = state.stats;
