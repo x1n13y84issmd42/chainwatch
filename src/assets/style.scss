@@ -1,4 +1,4 @@
-$panel-bg-color: rgba(0, 0, 0, 0.4);
+$panel-bg-color: rgba(0, 0, 0, 0.2);
 $text-color: white;
 $text-color-dim: #888;
 $margin-base: 20px;
@@ -117,6 +117,13 @@ input[type=button]:hover {
     bottom: 30px;
     background-color: $panel-bg-color;
     border-radius: $br;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.2) 0%,
+        rgba(0, 0, 0, 0) 25%,
+        rgba(0, 0, 0, 0) 75%,
+        rgba(0, 0, 0, 0.2) 100%
+    );
 }
 
 #sidebar_wide {
