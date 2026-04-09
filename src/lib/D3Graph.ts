@@ -16,6 +16,7 @@ const COLOR_NODE_CONTRACT = 'rgb(255, 100, 75)';
 const COLOR_EDGE = "rgba(255, 255, 255, 0.5)";
 // const COLOR_EDGE_ARROW = "rgb(127, 127, 127)";
 const COLOR_EDGE_ARROW = COLOR_EDGE;
+
 export class D3Graph {
 	protected svg!: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
 	protected w!: number;
@@ -241,7 +242,7 @@ export class D3Graph {
 			.attr('ry', 5)
 			.attr('width', d => d.label.length * 7.2 + 10)
 			.attr('height', 20)
-			.attr('fill', 'rgba(111, 111, 111, 0.5)')
+			.attr('fill', 'rgba(111, 111, 111, 0.3)')
 		;
 		enterNodeLabelBGs.merge(updNodeLabelBGs as any).merge(exitNodeLabelBGs as any);
 
