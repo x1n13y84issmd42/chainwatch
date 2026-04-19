@@ -1,5 +1,6 @@
 import Web3 from "web3";
-import ENS from './ENS';
+// import ENS from './ENS';
+import { ENS } from "./ENS";
 
 type TxEdge = {
 	hash: string;
@@ -42,9 +43,10 @@ type AddrChainDataHandler = (a: AddressNode)=>void;
 
 export class TxGraph {
 	addressBook: AddressMap = new Map();
+	ENS: ENS;
 
 	constructor(private web3: Web3) {
-		///
+		this.ENS = new ENS(web3);
 	}
 
 	addTx(fromAddr: string, toAddr: string, amount: number, hash?: string) {
@@ -94,7 +96,7 @@ export class TxGraph {
 		if (! this.addressBook.has(addr)) {
 			this.addressBook.set(addr, {
 				a: addr,
-				name: ENS[addr],
+				name: addr,//ENS[addr],
 				as: `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`,
 				balance: 0,
 				type: AddressType.WALLET,
@@ -123,10 +125,15 @@ export class TxGraph {
 	
 				const b = await this.web3.eth.getBalance(addr);
 				a.balance = +this.web3.utils.fromWei(b, 'ether');
-	
+				a.name = await this.ENS.reverseLookup(addr);
+				
 				const code = await this.web3.eth.getCode(addr);
 				if (code !== '0x') {
 					a.type = AddressType.CONTRACT;
+
+					if (code.substring(0, 8) === '0xef0100') {
+						a.name = 'EIP-7702 Delegate'
+					}
 				}
 	
 				this.addressBook.set(addr, a);
