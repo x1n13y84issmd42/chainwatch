@@ -151,6 +151,13 @@ export default {
 	'0xef8d232c5d21e905978e431a207e25c87ef92f49': 'The Vision (UFO) Token',
 	'0xee05e793a5a7587ba73ba39f6791d0887a64adc8': 'CatGirl Optimus (CATGIRL) Token',
 	'0x81f8f0bb1cb2a06649e51913a151f0e7ef6fa321': 'VitaDAO Token (VITA) Token',
+	'0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c': 'Bancor (BNT) Token',
+	'0x88df592f8eb5d7bd38bfef7deb0fbc02cf3778a0': 'Tellor Tributes (TRB) Token',
+	'0x3597bfd533a99c9aa083587b074434e61eb0a258': 'DENT (DENT) Token',
+	'0xe6bfd33f52d82ccb5b37e16d3dd81f9ffdabb195': 'Space and Time (SXT) Token',
+	'0x809a3cb8f8215e1031dded5318c61de8f49ec0cd': 'Floki Frunkpuppy (FRUNKPUPPY) Token',
+	'0x99420584706e47b1c5198cd80fef64d09f94adf1': 'Forg (FORG) Token',
+	'0x7615e8a700a4c9d724cf66e355831a11499f35fa': 'Anime (ANIME) Token',
 
 	'0x97e6567c3b63d2e0ec4ad0b96b356c675da1ab7e': 'Spring Token Presail',
 
