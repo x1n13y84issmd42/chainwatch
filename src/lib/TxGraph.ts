@@ -60,6 +60,8 @@ export class TxGraph {
 
 		this.addFromTx(from, tx);
 		this.addToTx(to, tx);
+
+		return [from, to];
 	}
 
 	private addFromTx(addr: AddressNode, tx: TxEdge) {

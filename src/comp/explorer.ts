@@ -1,6 +1,7 @@
 import { BlockHeaderOutput, Transaction, Web3 } from 'web3';
 import { D3Graph } from '../lib/D3Graph';
 import { Context } from '@x1n13y84issmd42/react-at-home';
+import { ArraySortedDesc } from '@x1n13y84issmd42/n/dist/collections/SortedArray';
 import { TxMonitor } from '../lib/TxMonitor';
 import { AddressNode, AddressType, TxGraph } from '../lib/TxGraph';
 
@@ -102,19 +103,22 @@ export async function stateFn(state: State) {
 			if (state.timer) {
 				clearInterval(state.timer);
 			}
+
+			const top40 = new ArraySortedDesc<AddressNode>(40, (a, b) => a.numChainPaths < b.numChainPaths);
 			
 			state.timer = setInterval(() => {
-				const addresses: AddressNode[] = [];
-				//TODO: maintain top addresses in a heap/bin tree.
-				for (let a of state.txg!.addressBook.values()) {
-					if (a.numChainPaths > 1) addresses.push(a);
-				}
-				addresses.sort((a1, a2) => {
-					return a2.numChainPaths - a1.numChainPaths;
-				});
-				addresses.splice(40);
+				// const addresses: AddressNode[] = [];
+				// //TODO: maintain top addresses in a heap/bin tree.
+				// for (let a of state.txg!.addressBook.values()) {
+				// 	if (a.numChainPaths > 1) addresses.push(a);
+				// }
+				// addresses.sort((a1, a2) => {
+				// 	return a2.numChainPaths - a1.numChainPaths;
+				// });
+				// addresses.splice(40);
 
-				state.top_addresses = addresses;
+				// state.top_addresses = addresses;
+				state.top_addresses = top40;
 				state.stats = state.stats;
 			}, 1000);
 
@@ -125,7 +129,9 @@ export async function stateFn(state: State) {
 			mon.on('tx', async (tx: Transaction) => {
 				console.log('tx', tx);
 				if (tx.from && tx.to && tx.from !== tx.to) {
-					state.txg!.addTx(tx.from, tx.to, +web3.utils.fromWei(tx.value||0n, 'ether'), (tx as any).hash);
+					const [from, to] = state.txg!.addTx(tx.from, tx.to, +web3.utils.fromWei(tx.value||0n, 'ether'), (tx as any).hash);
+					top40.push(from);
+					top40.push(to);
 					state.stats!.txCount++;
 				} else {
 					state.stats!.txSkippedCount++;
