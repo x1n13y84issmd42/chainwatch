@@ -282,6 +282,12 @@ svg {
         .name {
             padding-left: 10px;
             text-transform: uppercase;
+            max-width: 150px;
+            height: 10px;
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .name.addr {
