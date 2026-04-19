@@ -1,6 +1,5 @@
 import * as d3 from 'd3';
 import { AddressType } from './TxGraph';
-import ENS from './ENS';
 
 type Addr = {addr: string, balance?: number};
 type Tx = {source: number, target: number, amount: number};
@@ -132,7 +131,7 @@ export class D3Graph {
 		return addrIndex > -1;
 	}
 
-	addAddress(addr: string, balance: number, type: AddressType) {
+	addAddress(addr: string, name: string|undefined, balance: number, type: AddressType) {
 		const addrIndex = this.nodes.findIndex(n => n.addr === addr);
 		if (addrIndex != -1) {
 			// console.log(addr, `already added @`, addrIndex);
@@ -143,7 +142,7 @@ export class D3Graph {
 
 		this.maxBalance = Math.max(this.maxBalance, balance);
 
-		const name = ENS[addr] || `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`;
+		name = name || `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`;
 		
 		const n: GraphNode = {
 			addr,

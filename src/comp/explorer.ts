@@ -41,11 +41,6 @@ export async function stateFn(state: State) {
 	if (state.web3) {
 		const web3 = state.web3;
 
-		state.addnode = function() {
-			const a = `${Math.floor(Math.random() * 9999)}`;
-			state.dg?.addAddress(a, 11, 0);
-		}
-
 		state.stats = {
 			blockN: 0,
 			txCount: 0,
@@ -74,8 +69,8 @@ export async function stateFn(state: State) {
 				const an = state.txg.getAddress(addr);
 
 				state.txg.traverseTx(an, (tx) => {
-					const i1 = state.dg!.addAddress(tx.from.a, tx.from.balance, tx.from.type);
-					const i2 = state.dg!.addAddress(tx.to.a, tx.to.balance, tx.to.type);
+					const i1 = state.dg!.addAddress(tx.from.a, tx.from.name, tx.from.balance, tx.from.type);
+					const i2 = state.dg!.addAddress(tx.to.a, tx.to.name, tx.to.balance, tx.to.type);
 					state.dg?.addTx(i1, i2, tx.amount);
 				}, 70);
 
@@ -123,7 +118,6 @@ export async function stateFn(state: State) {
 			});
 
 			mon.on('tx', async (tx: Transaction) => {
-				console.log('tx', tx);
 				if (tx.from && tx.to && tx.from !== tx.to) {
 					state.txg!.addTx(tx.from, tx.to, +web3.utils.fromWei(tx.value||0n, 'ether'), (tx as any).hash);
 					state.stats!.txCount++;
