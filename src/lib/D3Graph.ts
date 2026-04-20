@@ -10,8 +10,8 @@ type GraphEdge = Tx & Partial<{x1: number, y1: number, x2: number, y2: number}>;
 const MAX_NODE_R = 20;
 const MAX_EDGE_W = 6;
 
-const COLOR_NODE_WALLET = 'rgb(75, 100, 255)';
-const COLOR_NODE_CONTRACT = 'rgb(255, 100, 75)';
+const COLOR_NODE_WALLET = 'rgba(75, 100, 255, 0.75)';
+const COLOR_NODE_CONTRACT = 'rgba(255, 100, 75, 0.75)';
 const COLOR_EDGE = "rgba(255, 255, 255, 0.5)";
 // const COLOR_EDGE_ARROW = "rgb(127, 127, 127)";
 const COLOR_EDGE_ARROW = COLOR_EDGE;
@@ -131,7 +131,7 @@ export class D3Graph {
 		return addrIndex > -1;
 	}
 
-	addAddress(addr: string, name: string|undefined, balance: number, type: AddressType) {
+	addAddress(addr: string, name: string|undefined, balance: number, type: AddressType): number {
 		const addrIndex = this.nodes.findIndex(n => n.addr === addr);
 		if (addrIndex != -1) {
 			// console.log(addr, `already added @`, addrIndex);
