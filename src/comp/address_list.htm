@@ -3,7 +3,7 @@
 		<for of="this.addresses" onclick="this.onclick">
 			<p class="`type_${item.type}`" onclick="this.onclick(item.a)">
 				<span class="'name ' + (item.name ? 'full' : 'addr')">item.name||item.as</span>
-				<span class="'w'">`${item.pathsTo} / ${item.pathsFrom} / ${item.numChainPaths}`</span>
+				<span class="'w'">`${item.txTo.length} / ${item.txFrom.length}`</span>
 			</p>
 		</for>
 	</div>

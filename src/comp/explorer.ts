@@ -82,12 +82,12 @@ export async function stateFn(state: State) {
 
 		state.txg = new TxGraph(web3);
 
-		state.txg.onAddrChainData(addr => {
-			if (addr.type === AddressType.CONTRACT)
+		state.txg.on('AddrChainData', (e => {
+			if (e.addr.type === AddressType.CONTRACT)
 				state.stats!.contractAddrs++;
 			else
 				state.stats!.walletAddrs++;
-		});
+		}));
 
 		// Monitor transactions.
 		state.monitor_start = function() {
@@ -99,13 +99,10 @@ export async function stateFn(state: State) {
 			}
 			
 			state.timer = setInterval(() => {
-				const addresses: AddressNode[] = [];
 				//TODO: maintain top addresses in a heap/bin tree.
-				for (let a of state.txg!.addressBook.values()) {
-					if (a.numChainPaths > 1) addresses.push(a);
-				}
+				const addresses: AddressNode[] = [...state.txg!.addressBook.values()];
 				addresses.sort((a1, a2) => {
-					return a2.numChainPaths - a1.numChainPaths;
+					return (a2.txFrom.length + a2.txTo.length) - (a1.txFrom.length + a1.txTo.length);
 				});
 				addresses.splice(40);
 

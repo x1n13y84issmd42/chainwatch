@@ -1,6 +1,6 @@
 import Web3 from "web3";
-// import ENS from './ENS';
 import { ENS } from "./ENS";
+import { EventHost } from "./EventHost";
 
 type TxEdge = {
 	hash: string;
@@ -30,22 +30,26 @@ export type AddressNode = TxEdges & {
 	pathsFrom: number;
 	pathsTo: number;
 
-	numChainPaths: number;
-	avgCnainPathLength: number;
-	maxCnainPathLength: number;
+	amountSent: number;
+	amountReceived: number;
 };
 
 type AddressMap = Map<string, AddressNode>;
+type AddrEvent = {addr: AddressNode};
+type AddrTxEvent = {addr: AddressNode, tx: TxEdge};
 
-type AddressNodeHandler = (a: AddressNode, p?: AddressNode, amnt?: number, seen?: Set<AddressNode>) => void;
+type TxGraphEventTypes = {
+	AddrChainData: AddrEvent,
+	IncomingTx: AddrTxEvent,
+	OutgoingTx: AddrTxEvent,
+};
 
-type AddrChainDataHandler = (a: AddressNode)=>void;
-
-export class TxGraph {
+export class TxGraph extends EventHost<TxGraphEventTypes> {
 	addressBook: AddressMap = new Map();
 	ENS: ENS;
 
 	constructor(private web3: Web3) {
+		super();
 		this.ENS = new ENS(web3);
 	}
 
@@ -66,30 +70,14 @@ export class TxGraph {
 
 	private addFromTx(addr: AddressNode, tx: TxEdge) {
 		addr.txFrom.push(tx);
-		addr.pathsFrom++;
-
-		const pathFromMod = tx.to.pathsFrom ? tx.to.pathsFrom - 1 : 0;
-
-		if (addr.pathsFrom > 1) {
-			this.traversePathIn(addr, (node) => {
-				node.pathsFrom += pathFromMod;
-				node.numChainPaths = (node.pathsTo||1) * (node.pathsFrom||1);
-			});
-		}
+		addr.amountSent += tx.amount;
+		this.dispatch('OutgoingTx', {addr, tx});
 	}
 	
 	private addToTx(addr: AddressNode, tx: TxEdge) {
 		addr.txTo.push(tx);
-		addr.pathsTo++;
-	
-		const pathToMod = tx.from.pathsTo ? tx.from.pathsTo - 1 : 0;
-
-		if (addr.pathsTo > 1) {
-			this.traversePathOut(addr, (node) => {
-				node.pathsTo += pathToMod;
-				node.numChainPaths = (node.pathsFrom||1) * (node.pathsTo||1);
-			});
-		}
+		addr.amountReceived += tx.amount;
+		this.dispatch('IncomingTx', {addr, tx});
 	}
 
 	getAddress(addr: string): AddressNode {
@@ -102,9 +90,8 @@ export class TxGraph {
 				type: AddressType.WALLET,
 				pathsFrom: 0,
 				pathsTo: 0,
-				numChainPaths: 0,
-				avgCnainPathLength: 0,
-				maxCnainPathLength: 0,
+				amountSent: 0,
+				amountReceived: 0,
 				txFrom: [],
 				txTo: [],
 			});
@@ -132,41 +119,19 @@ export class TxGraph {
 					a.type = AddressType.CONTRACT;
 
 					if (code.substring(0, 8) === '0xef0100') {
-						a.name = 'EIP-7702 Delegate'
+						a.name = 'EIP-7702 Delegate';
 					}
 				}
 	
 				this.addressBook.set(addr, a);
-				this.handleAddrChainData(a);
+				this.dispatch('AddrChainData', {addr: a});
 			} catch (e: unknown) {
 				console.error(e);
 			}
 		});
 	}
 
-	traversePathOut(addr: AddressNode, h: AddressNodeHandler) {
-		function dfs(parentNode: AddressNode | undefined, node: AddressNode, amount: number, seen: Set<AddressNode>) {
-			if (seen.has(node)) return;
-			h(node, parentNode, amount, seen);
-			seen.add(node);
-			node.txFrom.forEach(e => dfs(node, e.to, e.amount, seen));
-		}
-
-		dfs(undefined, addr, 0, new Set());
-	}
-
-	traversePathIn(addr: AddressNode, h: AddressNodeHandler) {
-		function dfs(parentNode: AddressNode | undefined, node: AddressNode, amount: number, seen: Set<AddressNode>) {
-			if (seen.has(node)) return;
-			h(node, parentNode, amount, seen);
-			seen.add(node);
-			node.txTo.forEach(e => dfs(node, e.from, e.amount, seen));
-		}
-
-		dfs(undefined, addr, 0, new Set());
-	}
-	
-	traverseTx(addr: AddressNode, h: (tx: TxEdge)=>void, txLimit: number) {
+	traverseTx(addr: AddressNode, h: (tx:TxEdge)=>void, txLimit: number) {
 		function dfs(tx: TxEdge, seen: Set<string>) {
 			if (seen.size >= txLimit) return;
 			if (seen.has(tx.hash)) return;
@@ -182,14 +147,5 @@ export class TxGraph {
 		addr.txTo.forEach(e => dfs(e, s));
 		addr.txFrom.forEach(e => dfs(e, s));
 	}
-
-	private onAddrChainDataHandlers: AddrChainDataHandler[] = [];
-
-	onAddrChainData(h: AddrChainDataHandler) {
-		this.onAddrChainDataHandlers.push(h);
-	}
-
-	handleAddrChainData(addr: AddressNode) {
-		this.onAddrChainDataHandlers.forEach(h => h(addr));
-	}
 }
+
