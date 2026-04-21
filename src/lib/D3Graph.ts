@@ -201,7 +201,7 @@ export class D3Graph {
 			.attr('cy', d => d.y)
 			.attr('r', 7)
 			.attr('fill', d => d.type === 0 ? COLOR_NODE_WALLET : COLOR_NODE_CONTRACT)
-			.attr('stroke', 'rgba(255, 255, 255, 0.5)')
+			// .attr('stroke', 'rgba(255, 255, 255, 0.5)')
 			.attr('stroke-width', 3)
 			.call(this.dragHandler as any);
 

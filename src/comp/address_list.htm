@@ -1,8 +1,8 @@
 <component:address_list>
 	<div class="'address_list small_list'">
 		<for of="this.addresses" onclick="this.onclick">
-			<p class="`type_${item.type}`" onclick="this.onclick(item.a)">
-				<span class="'name ' + (item.name ? 'full' : 'addr')">item.name||item.as</span>
+			<p class="`type_${item.type} ` + (item.name ? 'full' : 'addr')" onclick="this.onclick(item.a)">
+				<span class="'name'">item.name||item.as</span>
 				<span class="'w'">`${item.txTo.length} / ${item.txFrom.length}`</span>
 			</p>
 		</for>

@@ -8,7 +8,8 @@ $border-radius: $margin-half;
 $btn-text: $text-color;
 $btn-text-active: black;
 $btn-bg-color: #248;
-$btn-bg-color-active: #d82;
+$color-active: #d82;
+$btn-bg-color-active: $color-active;
 
 // #248
 // #d82
@@ -24,7 +25,6 @@ $btn-bg-color-active: #d82;
 	padding: 0;
 	margin: 0;
     font-size: sans-serif;
-    color: $text-color;
 }
 
 html {
@@ -200,6 +200,7 @@ input[type=button]:hover {
 	width: 250px;
     overflow: auto;
     scrollbar-width: none;
+    color: $text-color;
     
     .container {
         margin: $margin-half;
@@ -299,6 +300,10 @@ svg {
             float: right;
         }
     }
+
+    p.addr {
+        opacity: 0.5;
+    }
     
     p:hover {
         font-weight: bold;
@@ -310,13 +315,16 @@ svg {
     }
     
     p.type_0 {
-        * {
-            color: white;
-        }
+        color: white;
     }
     p.type_1 {
-        * {
-            color: orange;
-        }
+        color: orange;
+    }
+
+    p.selected.type_0,
+    p.selected.type_1 {
+        background-color: $color-active;
+        color: $text-color;
+        opacity: 1;
     }
 }

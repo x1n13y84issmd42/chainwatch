@@ -84,7 +84,7 @@ export class TxGraph extends EventHost<TxGraphEventTypes> {
 		if (! this.addressBook.has(addr)) {
 			this.addressBook.set(addr, {
 				a: addr,
-				name: addr,//ENS[addr],
+				name: undefined,
 				as: `${addr.substring(0, 6)}...${addr.substring(addr.length-4)}`,
 				balance: 0,
 				type: AddressType.WALLET,
