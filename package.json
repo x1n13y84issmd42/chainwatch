@@ -14,6 +14,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@types/d3": "^7.4.3",
+    "@x1n13y84issmd42/react-at-home": "github:x1n13y84issmd42/react-at-home",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "html-webpack-plugin": "^5.6.6",
@@ -27,7 +28,6 @@
     "webpack-dev-server": "^5.2.3"
   },
   "dependencies": {
-    "@x1n13y84issmd42/react-at-home": "^1.0.0",
     "d3": "^7.9.0",
     "web3": "^4.16.0"
   }
