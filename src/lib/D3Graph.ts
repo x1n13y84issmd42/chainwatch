@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { AddressType } from './TxGraph';
+import { AddressType } from "./types";
 
 type Addr = {addr: string, balance?: number};
 type Tx = {source: number, target: number, amount: number};

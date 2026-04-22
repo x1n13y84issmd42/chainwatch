@@ -2,7 +2,9 @@ import { BlockHeaderOutput, Transaction, Web3 } from 'web3';
 import { D3Graph } from '../lib/D3Graph';
 import { Context } from '@x1n13y84issmd42/react-at-home';
 import { TxMonitor } from '../lib/TxMonitor';
-import { AddressNode, AddressType, TxGraph } from '../lib/TxGraph';
+import { TxGraph } from '../lib/TxGraph';
+import { AddressNode, AddressType } from "../lib/types";
+import { TopAddrs } from '../lib/TopAddrs';
 
 export type State = Partial<{
 	ethereum: any;
@@ -80,7 +82,11 @@ export async function stateFn(state: State) {
 			state.select_address!(addr);
 		}
 
+		const topAddrs = new TopAddrs(40);
+
 		state.txg = new TxGraph(web3);
+		state.txg.on('IncomingTx', evt => topAddrs.push(evt.addr));
+		state.txg.on('OutgoingTx', evt => topAddrs.push(evt.addr));
 
 		state.txg.on('AddrChainData', (e => {
 			if (e.addr.type === AddressType.CONTRACT)
@@ -99,14 +105,7 @@ export async function stateFn(state: State) {
 			}
 			
 			state.timer = setInterval(() => {
-				//TODO: maintain top addresses in a heap/bin tree.
-				const addresses: AddressNode[] = [...state.txg!.addressBook.values()];
-				addresses.sort((a1, a2) => {
-					return (a2.txFrom.length + a2.txTo.length) - (a1.txFrom.length + a1.txTo.length);
-				});
-				addresses.splice(40);
-
-				state.top_addresses = addresses;
+				state.top_addresses = topAddrs;
 				state.stats = state.stats;
 			}, 1000);
 

@@ -18,6 +18,7 @@
 			top_addresses="this.top_addresses"
 			explore_address="this.explore_address"
 			select_address="this.select_address"
+			selected_address="this.selected_address"
 			monitor="this.monitor"
 			stats="this.stats"
 		>
@@ -42,7 +43,7 @@
 				<p><span class="'n'">'Contracts:'</span><span class="'v'">this.stats.contractAddrs</span></p>
 			</div>
 
-			<address_list addresses="this.top_addresses" addrclick="this.explore_address"></address_list>
+			<address_list selected_address="this.selected_address" addresses="this.top_addresses" addrclick="this.explore_address"></address_list>
 		</sidebar_wide>
 
 		<addr_info address="this.selected_address" explore_address="this.select_address"></addr_info>
