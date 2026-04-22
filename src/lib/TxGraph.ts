@@ -1,38 +1,7 @@
 import Web3 from "web3";
 import { ENS } from "./ENS";
 import { EventHost } from "./EventHost";
-
-type TxEdge = {
-	hash: string;
-	amount: number;
-	from: AddressNode;
-	to: AddressNode;
-};
-
-export enum AddressType {
-	WALLET,
-	CONTRACT,
-};
-
-export type TxEdges = {
-	txFrom: TxEdge[];
-	txTo: TxEdge[];
-}
-
-export type AddressNode = TxEdges & {
-	a: string;
-	as: string; // Shortened address
-	name?: string;
-	balance: number;
-
-	type: AddressType;
-
-	pathsFrom: number;
-	pathsTo: number;
-
-	amountSent: number;
-	amountReceived: number;
-};
+import { AddressNode, TxEdge, AddressType } from "./types";
 
 type AddressMap = Map<string, AddressNode>;
 type AddrEvent = {addr: AddressNode};
